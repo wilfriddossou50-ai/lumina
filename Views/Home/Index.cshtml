@@ -1,8 +1,130 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Accueil";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome to mvc</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+<!-- HERO SECTION -->
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <span class="hero-badge">REDÉFINIR LE SAVOIR</span>
+            <h1>Modernisez votre expérience de lecture</h1>
+            <p class="hero-desc">
+                La Bibliothèque Lumina marie l'essence intemporelle des archives classiques
+                à la précision des outils numériques modernes. Accédez à des collections
+                prestigieuses et gérez votre parcours intellectuel depuis n'importe quel support.
+            </p>
+        </div>
+        <div class="hero-image">
+            <img src="~/images/biblio.jpg" alt="Bibliothèque Lumina" class="hero-biblio-img" />
+        </div>
+    </div>
+</section>
+
+<!-- STATS SECTION -->
+<section class="stats">
+    <div class="stats-container">
+        <div class="stat-item">
+            <span class="stat-number">450k+</span>
+            <span class="stat-label">OUVRAGES SÉLECTIONNÉS</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">12k+</span>
+            <span class="stat-label">MEMBRES ACTIFS</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">1.5k+</span>
+            <span class="stat-label">PRÊTS QUOTIDIENS</span>
+        </div>
+    </div>
+</section>
+
+<!-- BOOKS SECTION -->
+<section class="books-section">
+    <div class="section-container">
+        <h2>Sélection Exclusive</h2>
+        <p class="section-subtitle">Nos conservateurs sélectionnent avec soin les œuvres les plus influentes en sciences, philosophie et littérature contemporaine.</p>
+
+        <div class="books-grid">
+            <div class="book-card">
+                <img class="book-cover-img" src="~/images/livres/philosophie.jpg" alt="L'Architecture de la Logique" />
+                <div class="book-info">
+                    <span class="book-category">PHILOSOPHIE</span>
+                    <h3>L'Architecture de la Logique</h3>
+                    <p>Une exploration profonde des structures qui définissent notre raisonnement.</p>
+                </div>
+            </div>
+            <div class="book-card">
+                <img class="book-cover-img" src="~/images/livres/histoire.jpg" alt="Échos de Byzance" />
+                <div class="book-info">
+                    <span class="book-category">HISTOIRE</span>
+                    <h3>Échos de Byzance</h3>
+                    <p>Retracer l'héritage culturel de la Méditerranée à travers des textes oubliés.</p>
+                </div>
+            </div>
+            <div class="book-card">
+                <img class="book-cover-img" src="~/images/livres/sciences.jpg" alt="Paysages Quantiques" />
+                <div class="book-info">
+                    <span class="book-category">SCIENCES</span>
+                    <h3>Paysages Quantiques</h3>
+                    <p>Visualiser les forces invisibles qui régissent le monde subatomique.</p>
+                </div>
+            </div>
+            <div class="book-card">
+                <img class="book-cover-img" src="~/images/livres/economie.jpg" alt="Systèmes de Croissance" />
+                <div class="book-info">
+                    <span class="book-category">ÉCONOMIE</span>
+                    <h3>Systèmes de Croissance</h3>
+                    <p>Un guide sur le développement organisationnel à l'ère du numérique.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- FEATURES SECTION -->
+<section class="features-section">
+    <div class="section-container">
+        <h2 class="text-center">Un Accès Sans Faille</h2>
+        <p class="section-subtitle text-center">Votre espace de travail intellectuel, adapté à la vie moderne.</p>
+
+        <div class="features-grid">
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    </svg>
+                </div>
+                <h3>1. Adhésion Sécurisée</h3>
+                <p>Rejoignez notre communauté mondiale d'érudits avec un abonnement flexible.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    </svg>
+                </div>
+                <h3>2. Découvrir et Réserver</h3>
+                <p>Explorez notre vaste catalogue d'actifs physiques et numériques en un clic.</p>
+            </div>
+            <div class="feature-item">
+                <div class="feature-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                    </svg>
+                </div>
+                <h3>3. Lire et Retourner</h3>
+                <p>Gérez vos prêts sans effort via votre tableau de bord personnel.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA SECTION -->
+<section class="cta-section">
+    <div class="cta-container">
+        <h2>Débutez votre voyage intellectuel aujourd'hui</h2>
+        <p>Rejoignez des milliers de lecteurs qui ont transformé leur rapport à la littérature grâce à Lumina.</p>
+        <a asp-controller="Auth" asp-action="Inscription" class="btn-cta">Créer un compte gratuit</a>
+    </div>
+</section>

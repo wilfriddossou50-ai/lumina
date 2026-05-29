@@ -1,0 +1,67 @@
+@model GestionBibliotheque.Models.TypeAbonnement
+@{
+    ViewData["Title"] = "Modifier un plan";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-abonnement.css" asp-append-version="true" />
+}
+
+<div class="abo-admin-page">
+    <section class="abo-hero">
+        <div>
+            <span class="abo-eyebrow">Edition de plan</span>
+            <h1>Modifier le plan d'abonnement</h1>
+            <p>
+                Mets a jour le libelle et le tarif avec une interface plus propre,
+                sans quitter l'espace d'administration.
+            </p>
+        </div>
+
+        <div class="abo-hero-side">
+            <a asp-action="Plans" class="abo-btn">Retour aux plans</a>
+            <div class="abo-hero-note">
+                <strong>Plan en cours : @Model.Libelle</strong>
+                <span>Verifie le tarif avant validation pour garder les offres coherentes.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="abo-panel abo-form-shell">
+        <div class="abo-panel-header">
+            <div>
+                <h2>Parametres du plan</h2>
+                <p>Renseigne le nom commercial du plan et son tarif.</p>
+            </div>
+        </div>
+
+        <form asp-action="EditPlan" method="post" class="abo-form">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="IdType" />
+
+            <div class="abo-form-grid">
+                <div class="abo-field">
+                    <label asp-for="Libelle">Libelle du plan</label>
+                    <input asp-for="Libelle" placeholder="Ex: Essentiel" />
+                    <span asp-validation-for="Libelle"></span>
+                </div>
+
+                <div class="abo-field">
+                    <label asp-for="Tarif">Tarif (FCFA)</label>
+                    <input asp-for="Tarif" type="number" min="0" step="0.01" placeholder="0" />
+                    <span asp-validation-for="Tarif"></span>
+                </div>
+
+                <div class="abo-form-actions">
+                    <a asp-action="Plans" class="abo-btn-danger">Annuler</a>
+                    <button type="submit" class="abo-btn-secondary">Enregistrer</button>
+                </div>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

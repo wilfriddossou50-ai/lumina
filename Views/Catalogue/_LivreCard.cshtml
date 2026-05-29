@@ -1,0 +1,103 @@
+@model GestionBibliotheque.Models.Livre
+@{
+    bool emprunte = ViewData["Emprunte"] as bool? ?? false;
+    bool reserve = ViewData["Reserve"] as bool? ?? false;
+    bool alerte = ViewData["Alerte"] as bool? ?? false;
+    bool dispo = (Model.QuantiteDisponible ?? 0) > 0 && Model.Statut != "indisponible";
+    bool indisponible = !dispo;
+
+    string titre = string.IsNullOrWhiteSpace(Model.Titre) ? "Livre sans titre" : Model.Titre!;
+    string auteur = string.IsNullOrWhiteSpace(Model.Auteur) ? "Auteur inconnu" : Model.Auteur!;
+    string categorie = string.IsNullOrWhiteSpace(Model.IdCategorieNavigation?.Libelle)
+        ? "Catalogue"
+        : Model.IdCategorieNavigation!.Libelle!;
+    string titreJs = System.Text.Json.JsonSerializer.Serialize(titre);
+    string categorieIcone = categorie.ToLowerInvariant() switch
+    {
+        var key when key.Contains("science") => "microscope",
+        var key when key.Contains("informatique") || key.Contains("tech") || key.Contains("num") => "monitor-cog",
+        var key when key.Contains("histoire") => "landmark",
+        var key when key.Contains("art") => "palette",
+        var key when key.Contains("roman") || key.Contains("litt") || key.Contains("poes") => "feather",
+        var key when key.Contains("economie") || key.Contains("finance") => "badge-dollar-sign",
+        _ => "sparkles"
+    };
+    string coverClass = categorie.ToLowerInvariant() switch
+    {
+        var key when key.Contains("science") => "teal",
+        var key when key.Contains("informatique") => "blue",
+        var key when key.Contains("histoire") => "olive",
+        var key when key.Contains("art") => "plum",
+        _ => "umber"
+    };
+}
+
+<article class="book-card-modern compact book-card-compact">
+    <div class="book-card-cover @coverClass" aria-hidden="true">
+        <div class="book-card-badges">
+            <span class="book-card-badge @(dispo ? "available" : "unavailable")">
+                @(dispo ? "Disponible" : "Indisponible")
+            </span>
+        </div>
+
+        <div class="book-card-icon" aria-hidden="true">
+            <span data-lucide="@categorieIcone"></span>
+        </div>
+    </div>
+
+    <div class="book-card-body">
+        <div class="book-card-copy">
+            <div class="book-card-title">@titre</div>
+            <div class="book-card-author">@auteur</div>
+        </div>
+
+        <div class="book-card-actions">
+            <a asp-action="Details" asp-route-id="@Model.IdLivre" class="book-btn-soft">
+                <span data-lucide="info"></span>
+                Details
+            </a>
+
+            @if (emprunte)
+            {
+                <span class="book-badge-state">En cours</span>
+            }
+            else if (dispo && !reserve)
+            {
+                <button type="button"
+                        class="book-btn"
+                        onclick='confirmerAction("emprunter", @Model.IdLivre, @Html.Raw(titreJs))'>
+                    <span data-lucide="book-open-check"></span>
+                    Emprunter
+                </button>
+            }
+            else if (indisponible)
+            {
+                <div class="book-card-inline-actions">
+                    @if (!reserve)
+                    {
+                        <button type="button"
+                                class="book-btn reserve"
+                                onclick='confirmerAction("reserver", @Model.IdLivre, @Html.Raw(titreJs))'>
+                            <span data-lucide="calendar-days"></span>
+                            Reserver
+                        </button>
+                    }
+
+                    @if (!alerte)
+                    {
+                        <button type="button"
+                                class="book-btn-soft"
+                                onclick='confirmerAction("alerte", @Model.IdLivre, @Html.Raw(titreJs))'>
+                            <span data-lucide="bell-plus"></span>
+                            M'alerter
+                        </button>
+                    }
+                </div>
+            }
+            else
+            {
+                <span class="book-badge-state reserve">Reserve</span>
+            }
+        </div>
+    </div>
+</article>

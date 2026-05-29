@@ -1,0 +1,72 @@
+@model List<GestionBibliotheque.Models.Reservation>
+@{
+    ViewData["Title"] = "Mes reservations";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+<div class="dash-hero">
+    <div class="dash-welcome">
+        <h1>Mes reservations</h1>
+        <p>Suivez votre file d'attente et les livres prets a etre recuperes.</p>
+    </div>
+</div>
+
+<div class="catalog-shell catalog-section">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state">
+            <p>Vous n'avez aucune reservation.</p>
+            <a asp-controller="Catalogue" asp-action="Index" class="catalog-btn">Explorer le catalogue</a>
+        </div>
+    }
+    else
+    {
+        <div class="member-reservation-list">
+            @foreach (var r in Model)
+            {
+                bool estDisponible = r.Statut == "disponible";
+                bool estHonoree = r.Statut == "honoree";
+                string pillClass = estDisponible ? "ok" : estHonoree ? "danger" : "warn";
+                string statutTexte = r.Statut == "en_attente"
+                    ? "En attente"
+                    : r.Statut == "disponible"
+                        ? "Disponible"
+                        : r.Statut == "honoree"
+                            ? "Honoree"
+                            : "Archivee";
+
+                <div class="member-reservation-item reservation-card-modern">
+                    <div class="member-book-spine">
+                        <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 012.25-2.25h13.5A2.25 2.25 0 0121 7.5v11.25m-18 0A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75m-18 0v-7.5A2.25 2.25 0 015.25 9h13.5A2.25 2.25 0 0121 9v7.5" />
+                        </svg>
+                    </div>
+
+                    <div class="member-reservation-meta">
+                        <strong>
+                            <a asp-controller="Catalogue" asp-action="Details" asp-route-id="@r.IdLivre" class="reservation-book-link">
+                                @(r.IdLivreNavigation?.Titre ?? "Livre indisponible")
+                            </a>
+                        </strong>
+                        <span>@statutTexte</span>
+                        <span>Demande le @(r.DateReservation?.ToString("dd/MM/yyyy") ?? "-")</span>
+                    </div>
+
+                    <div class="reservation-actions-modern">
+                        <div class="member-pill @pillClass">@statutTexte</div>
+                        @if (r.Statut == "en_attente" || r.Statut == "disponible")
+                        {
+                            <form asp-action="Annuler" method="post" style="margin:0;">
+                                @Html.AntiForgeryToken()
+                                <input type="hidden" name="id" value="@r.IdReservation" />
+                                <button type="submit" class="catalog-btn-soft" onclick="return confirm('Annuler cette reservation ?')">
+                                    Annuler
+                                </button>
+                            </form>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

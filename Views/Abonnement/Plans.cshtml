@@ -1,0 +1,79 @@
+@model List<GestionBibliotheque.Models.TypeAbonnement>
+@{
+    ViewData["Title"] = "Plans d'abonnement";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var totalPlans = Model?.Count ?? 0;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-abonnement.css" asp-append-version="true" />
+}
+
+<div class="abo-admin-page">
+    <section class="abo-hero">
+        <div>
+            <span class="abo-eyebrow">Plans administrateur</span>
+            <h1>Catalogue des plans d'abonnement</h1>
+            <p>
+                Mets a jour les offres proposees aux membres avec une presentation plus
+                claire des tarifs et des actions disponibles.
+            </p>
+        </div>
+
+        <div class="abo-hero-side">
+            <a asp-action="Index" class="abo-btn">Retour aux abonnements</a>
+            <div class="abo-hero-note">
+                <strong>@totalPlans plan(s) configure(s)</strong>
+                <span>Chaque plan peut etre ajuste rapidement depuis cette section.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="abo-panel">
+        <div class="abo-panel-header">
+            <div>
+                <h2>Plans disponibles</h2>
+                <p>Modifie les libelles et tarifs des formules visibles pour les membres.</p>
+            </div>
+            <p class="abo-result">@totalPlans plan@(totalPlans > 1 ? "s" : "")</p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="abo-empty">Aucun plan n'est defini.</div>
+        }
+        else
+        {
+            <div class="abo-table-wrap">
+                <table class="abo-table">
+                    <thead>
+                        <tr>
+                            <th>Plan</th>
+                            <th>Tarif</th>
+                            <th style="text-align:right;">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var plan in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="abo-plan">
+                                        <strong>@plan.Libelle</strong>
+                                        <span>Identifiant #@plan.IdType</span>
+                                    </div>
+                                </td>
+                                <td>@(plan.Tarif.HasValue ? $"{plan.Tarif:0} FCFA" : "-")</td>
+                                <td>
+                                    <div class="abo-actions">
+                                        <a asp-action="EditPlan" asp-route-id="@plan.IdType" class="abo-btn-secondary">Modifier</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>

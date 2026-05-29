@@ -1,0 +1,243 @@
+@model GestionBibliotheque.Models.Livre
+
+@{
+    ViewData["Title"] = "Details du Livre";
+    var role = ViewBag.CurrentRole as string ?? string.Empty;
+    var estAdmin = role == "admin";
+    var estMembre = role == "membre";
+    var dejaEmprunte = ViewBag.DejaEmprunte as bool? ?? false;
+    var dejaReserve = ViewBag.DejaReserve as bool? ?? false;
+    var alerteActive = ViewBag.AlerteActive as bool? ?? false;
+    var positionFile = ViewBag.PositionFile as int? ?? 0;
+    var nbEmprunts = ViewBag.NbEmprunts as int? ?? 0;
+    var plan = ViewBag.AbonnementLibelle as string ?? "Gratuit";
+    var disponible = (Model.QuantiteDisponible ?? 0) > 0 && Model.Statut != "indisponible";
+    var titreJs = (Model.Titre ?? "ce livre").Replace("\\'", "\\\\\'");
+
+    Layout = estAdmin
+        ? "~/Views/Shared/_AdminLayout.cshtml"
+        : "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+<div class="dash-hero">
+    <div class="dash-welcome">
+        <h1>Details du Livre</h1>
+        <p>@Model.Titre</p>
+    </div>
+</div>
+
+@if (estMembre)
+{
+    <form id="catalogueAntiForgeryForm" style="display:none;">
+        @Html.AntiForgeryToken()
+    </form>
+}
+
+<div class="dash-card form-card" style="max-width: 980px; margin: 0 auto;">
+    <div class="detail-grid">
+        <div>
+            <h2 style="margin-bottom: 0.75rem;">Informations generales</h2>
+            <p><strong>Titre :</strong> @Model.Titre</p>
+            <p><strong>Auteur :</strong> @(string.IsNullOrWhiteSpace(Model.Auteur) ? "N/A" : Model.Auteur)</p>
+            <p><strong>Editeur :</strong> @(string.IsNullOrWhiteSpace(Model.Editeur) ? "N/A" : Model.Editeur)</p>
+            <p><strong>ISBN :</strong> @(string.IsNullOrWhiteSpace(Model.Isbn) ? "N/A" : Model.Isbn)</p>
+            <p><strong>Langue :</strong> @Model.Langue</p>
+            <p><strong>Categorie :</strong> @(Model.IdCategorieNavigation?.Libelle ?? "N/A")</p>
+        </div>
+        <div>
+            <h2 style="margin-bottom: 0.75rem;">Disponibilite</h2>
+            <p><strong>Quantite totale :</strong> @(Model.QuantiteTotal?.ToString() ?? "0")</p>
+            <p><strong>Quantite disponible :</strong> @(Model.QuantiteDisponible?.ToString() ?? "0")</p>
+            <p><strong>Statut :</strong> @Model.Statut</p>
+            <p><strong>Emplacement :</strong> @(string.IsNullOrWhiteSpace(Model.Emplacement) ? "N/A" : Model.Emplacement)</p>
+            <p><strong>Annee publication :</strong> @(Model.AnneePublication?.ToString("yyyy") ?? "N/A")</p>
+        </div>
+    </div>
+
+    @if (estMembre)
+    {
+        <div class="detail-panel" style="margin-top: 1.5rem;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;flex-wrap:wrap;">
+                <div>
+                    <h2 style="margin-bottom:0.35rem;">Actions membre</h2>
+                    <p style="margin:0;color:var(--text-muted, #64748b);font-size:0.95rem;">
+                        Plan @plan • @nbEmprunts emprunt(s) en cours
+                    </p>
+                </div>
+                <div style="display:flex;gap:0.6rem;flex-wrap:wrap;">
+                    @if (dejaEmprunte)
+                    {
+                        <span class="book-badge-state">Deja emprunte</span>
+                    }
+                    else if (dejaReserve)
+                    {
+                        <span class="book-badge-state reserve">Reserve@(positionFile > 0 ? $" - position {positionFile}" : "")</span>
+                    }
+                    else if (disponible)
+                    {
+                        <span class="book-badge-state" style="background:#dcfce7;color:#166534;">Disponible</span>
+                    }
+                    else
+                    {
+                        <span class="book-badge-state reserve">Indisponible</span>
+                    }
+
+                    @if (alerteActive)
+                    {
+                        <span class="book-badge-state" style="background:#dbeafe;color:#1d4ed8;">Alerte active</span>
+                    }
+                </div>
+            </div>
+
+            <div style="display:flex;gap:0.75rem;flex-wrap:wrap;margin-top:1.25rem;">
+                @if (!dejaEmprunte && disponible)
+                {
+                    <button type="button"
+                            class="book-btn"
+                            onclick="confirmerAction(\'emprunter\', @Model.IdLivre, \'@Html.Raw(titreJs)\')">
+                        Emprunter
+                    </button>
+                }
+
+                @if (!dejaEmprunte && !dejaReserve && !disponible)
+                {
+                    <button type="button"
+                            class="book-btn reserve"
+                            onclick="confirmerAction(\'reserver\', @Model.IdLivre, \'@Html.Raw(titreJs)\')">
+                        Reserver
+                    </button>
+                }
+
+                @if (!disponible && !alerteActive)
+                {
+                    <button type="button"
+                            class="book-btn-soft"
+                            onclick="confirmerAction(\'alerte\', @Model.IdLivre, \'@Html.Raw(titreJs)\')">
+                        Notifier de la disponibilite
+                    </button>
+                }
+
+                @if (alerteActive)
+                {
+                    <a asp-controller="Alerte" asp-action="MesAlertes" class="book-btn-soft">
+                        Voir mes alertes
+                    </a>
+                }
+            </div>
+        </div>
+    }
+
+    <div style="margin-top: 1.5rem;">
+        <h2 style="margin-bottom: 0.75rem;">Description</h2>
+        <div class="detail-panel">
+            @Html.Raw(Model.Description?.Replace("\n", "<br />"))
+        </div>
+    </div>
+
+    <div class="admin-form-actions" style="margin-top: 2rem; justify-content: flex-end;">
+        <a asp-action="Index" class="admin-cta-secondary">
+            <span data-lucide="arrow-left"></span>
+            Retour au catalogue
+        </a>
+        @if (estAdmin)
+        {
+            <a asp-action="Edit" asp-route-id="@Model.IdLivre" class="admin-cta">
+                <span data-lucide="pencil"></span>
+                Modifier ce livre
+            </a>
+        }
+    </div>
+</div>
+
+@if (estMembre)
+{
+    <div id="actionModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:500;align-items:center;justify-content:center;">
+        <div style="background:white;border-radius:var(--radius, 12px);padding:2rem;max-width:420px;width:90%;box-shadow:var(--shadow-md, 0 12px 32px rgba(15,23,42,.18));">
+            <h3 id="modalTitle" style="font-size:1.05rem;font-weight:700;margin-bottom:0.5rem;color:var(--text-dark, #0f172a);"></h3>
+            <p id="modalMessage" style="font-size:0.875rem;color:var(--text-muted, #64748b);margin-bottom:1.5rem;"></p>
+            <div style="display:flex;gap:0.75rem;justify-content:flex-end;">
+                <button onclick="closeModal()"
+                        style="padding:0.6rem 1.25rem;background:#f1f5f9;color:#334155;border:none;border-radius:8px;font-weight:600;cursor:pointer;">
+                    Annuler
+                </button>
+                <button id="modalConfirmBtn"
+                        style="padding:0.6rem 1.25rem;background:#0f766e;color:white;border:none;border-radius:8px;font-weight:600;cursor:pointer;">
+                    Confirmer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" style="display:none;position:fixed;bottom:2rem;right:2rem;background:#0f172a;color:white;padding:0.875rem 1.5rem;border-radius:10px;font-size:0.875rem;font-weight:500;box-shadow:0 12px 32px rgba(15,23,42,.18);z-index:600;max-width:360px;"></div>
+}
+
+@section Scripts {
+    @if (estMembre)
+    {
+        <script>
+            const token = document.querySelector(\'#catalogueAntiForgeryForm input[name=\"__RequestVerificationToken\"]\')?.value ?? \'\';
+
+            function confirmerAction(action, idLivre, titreLivre) {
+                const config = {
+                    emprunter: {
+                        title: \'Emprunter ce livre\',
+                        message: `Vous allez emprunter \"${titreLivre}\".`,
+                        url: \'/Catalogue/Emprunter\',
+                        color: \'#0f766e\'
+                    },
+                    reserver: {
+                        title: \'Reserver ce livre\',
+                        message: `Vous allez reserver \"${titreLivre}\".`,
+                        url: \'/Catalogue/Reserver\',
+                        color: \'#8a4c1f\'
+                    },
+                    alerte: {
+                        title: \'Notifier de la disponibilite\',
+                        message: `Vous serez notifie quand \"${titreLivre}\" redeviendra disponible.`,
+                        url: \'/Catalogue/CreerAlerte\',
+                        color: \'#1d4ed8\'
+                    }
+                };
+
+                const c = config[action];
+                document.getElementById(\'modalTitle\').textContent = c.title;
+                document.getElementById(\'modalMessage\').textContent = c.message;
+                document.getElementById(\'modalConfirmBtn\').style.background = c.color;
+                document.getElementById(\'modalConfirmBtn\').onclick = () => executerAction(c.url, idLivre);
+                document.getElementById(\'actionModal\').style.display = \'flex\';
+            }
+
+            function closeModal() {
+                document.getElementById(\'actionModal\').style.display = \'none\';
+            }
+
+            async function executerAction(url, idLivre) {
+                closeModal();
+                const form = new FormData();
+                form.append(\'idLivre\', idLivre);
+                form.append(\'__RequestVerificationToken\', token);
+
+                try {
+                    const res = await fetch(url, { method: \'POST\', body: form });
+                    const data = await res.json();
+                    showToast(data.message, data.success);
+                    if (data.success) setTimeout(() => location.reload(), 1400);
+                } catch {
+                    showToast(\'Une erreur est survenue.\', false);
+                }
+            }
+
+            function showToast(msg, success) {
+                const t = document.getElementById(\'toast\');
+                t.textContent = msg;
+                t.style.background = success ? \'#166534\' : \'#991b1b\';
+                t.style.display = \'block\';
+                setTimeout(() => t.style.display = \'none\', 3000);
+            }
+
+            document.getElementById(\'actionModal\')?.addEventListener(\'click\', function(e) {
+                if (e.target === this) closeModal();
+            });
+        </script>
+    }
+}

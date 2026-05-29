@@ -1,0 +1,156 @@
+@model GestionBibliotheque.Models.Livre
+
+@{
+    ViewData["Title"] = "Ajouter un Livre";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="dash-hero">
+    <div class="dash-welcome">
+        <h1>Ajouter un Livre</h1>
+        <p>Créer une nouvelle entrée au catalogue</p>
+    </div>
+</div>
+
+<div class="dash-card form-card" style="max-width: 800px; margin: 0 auto;">
+    <form method="post" asp-action="Create">
+        @Html.AntiForgeryToken()
+
+        <div class="admin-form-grid">
+
+            <!-- TITRE -->
+            <div class="form-group admin-form-full">
+                <label asp-for="Titre">
+                    Titre <span style="color: #ef4444;">*</span>
+                </label>
+                <input asp-for="Titre" class="form-control" type="text" placeholder="Titre du livre" required />
+                <span asp-validation-for="Titre" style="color: #ef4444; font-size: 0.75rem;"></span>
+            </div>
+
+            <!-- AUTEUR -->
+            <div class="form-group">
+                <label asp-for="Auteur">
+                    Auteur
+                </label>
+                <input asp-for="Auteur" class="form-control" type="text" placeholder="Nom de l'auteur" />
+            </div>
+
+            <!-- ÉDITEUR -->
+            <div class="form-group">
+                <label asp-for="Editeur">
+                    Éditeur
+                </label>
+                <input asp-for="Editeur" class="form-control" type="text" placeholder="Nom de l'éditeur" />
+            </div>
+
+            <!-- ISBN -->
+            <div class="form-group">
+                <label asp-for="Isbn">
+                    ISBN
+                </label>
+                <input asp-for="Isbn" class="form-control" type="text" placeholder="ISBN du livre" />
+            </div>
+
+            <!-- ANNÉE DE PUBLICATION -->
+            <div class="form-group">
+                <label asp-for="AnneePublication">
+                    Année de Publication
+                </label>
+                <input asp-for="AnneePublication" class="form-control" type="date" />
+            </div>
+
+            <!-- LANGUE -->
+            <div class="form-group">
+                <label asp-for="Langue">
+                    Langue <span style="color: #ef4444;">*</span>
+                </label>
+                <select asp-for="Langue" class="form-control" required>
+                    <option value="">Sélectionner...</option>
+                    <option value="Français">Français</option>
+                    <option value="Anglais">Anglais</option>
+                    <option value="Espagnol">Espagnol</option>
+                    <option value="Allemand">Allemand</option>
+                    <option value="Italien">Italien</option>
+                </select>
+                <span asp-validation-for="Langue" style="color: #ef4444; font-size: 0.75rem;"></span>
+            </div>
+
+            <!-- CATÉGORIE -->
+            <div class="form-group">
+                <label asp-for="IdCategorie">
+                    Catégorie <span style="color: #ef4444;">*</span>
+                </label>
+                <select asp-for="IdCategorie" class="form-control" required>
+                    <option value="0">Sélectionner une catégorie...</option>
+                    @foreach (var cat in ViewBag.Categories)
+                    {
+                        <option value="@cat.IdCategorie">@cat.Libelle</option>
+                    }
+                </select>
+                <span asp-validation-for="IdCategorie" style="color: #ef4444; font-size: 0.75rem;"></span>
+            </div>
+
+            <!-- QUANTITÉ TOTALE -->
+            <div class="form-group">
+                <label asp-for="QuantiteTotal">
+                    Quantité Totale
+                </label>
+                <input asp-for="QuantiteTotal" class="form-control" type="number" placeholder="1" min="1" value="1" />
+            </div>
+
+            <!-- QUANTITÉ DISPONIBLE -->
+            <div class="form-group">
+                <label asp-for="QuantiteDisponible">
+                    Quantité Disponible
+                </label>
+                <input asp-for="QuantiteDisponible" class="form-control" type="number" placeholder="1" min="0" />
+            </div>
+
+            <!-- EMPLACEMENT -->
+            <div class="form-group">
+                <label asp-for="Emplacement">
+                    Emplacement
+                </label>
+                <input asp-for="Emplacement" class="form-control" type="text" placeholder="Ex: Rayon A1" />
+            </div>
+
+            <!-- STATUT -->
+            <div class="form-group">
+                <label asp-for="Statut">
+                    Statut
+                </label>
+                <select asp-for="Statut" class="form-control">
+                    <option value="disponible">Disponible</option>
+                    <option value="indisponible">Indisponible</option>
+                    <option value="en_maintenance">En Maintenance</option>
+                </select>
+            </div>
+
+            <!-- DESCRIPTION -->
+            <div class="form-group admin-form-full">
+                <label asp-for="Description">
+                    Description <span style="color: #ef4444;">*</span>
+                </label>
+                <textarea asp-for="Description" class="form-control" placeholder="Description du livre..." rows="4" required></textarea>
+                <span asp-validation-for="Description" style="color: #ef4444; font-size: 0.75rem;"></span>
+            </div>
+
+        </div><!-- /.grid -->
+
+        <div class="admin-form-actions">
+            <a asp-action="Index" class="admin-cta-secondary">
+                <span data-lucide="arrow-left"></span>
+                Annuler
+            </a>
+            <button type="submit" class="admin-cta">
+                <span data-lucide="book-plus"></span>
+                Ajouter le Livre
+            </button>
+        </div>
+
+    </form>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

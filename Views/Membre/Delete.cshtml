@@ -1,0 +1,76 @@
+@model GestionBibliotheque.Models.Membre
+
+@{
+    ViewData["Title"] = "Supprimer le membre";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var nomComplet = $"{Model.Prenom} {Model.Nom}".Trim();
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-membre.css" asp-append-version="true" />
+}
+
+<div class="member-admin-page member-form-shell">
+    <section class="member-hero">
+        <div>
+            <span class="member-eyebrow">Suppression membre</span>
+            <h1>Confirmer la suppression</h1>
+            <p>
+                Tu es sur le point de supprimer la fiche de <strong>@nomComplet</strong>.
+                Verifie les informations ci-dessous avant de valider.
+            </p>
+        </div>
+
+        <div class="member-hero-side">
+            <a asp-action="Details" asp-route-id="@Model.IdMembre" class="member-btn">Voir la fiche</a>
+            <div class="member-highlight-card">
+                <strong>Action sensible</strong>
+                <span>Cette suppression peut impacter les donnees rattachees au membre.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="member-form-panel">
+        <div class="member-panel-header">
+            <div>
+                <h2>Verification avant suppression</h2>
+                <p>Controle la fiche puis confirme uniquement si la suppression est voulue.</p>
+            </div>
+        </div>
+
+        <div class="member-form-body">
+            <div class="member-danger-panel">
+                Cette action est irreversible. Les emprunts, reservations ou notifications lies a ce membre peuvent etre affectes.
+            </div>
+
+            <div class="member-summary-grid" style="margin-top:18px;">
+                <div class="member-summary-card">
+                    <span>Nom complet</span>
+                    <strong>@nomComplet</strong>
+                </div>
+                <div class="member-summary-card">
+                    <span>Statut</span>
+                    <strong>@Model.Statut</strong>
+                </div>
+                <div class="member-summary-card">
+                    <span>Email</span>
+                    <strong>@(string.IsNullOrWhiteSpace(Model.Mail) ? "-" : Model.Mail)</strong>
+                </div>
+                <div class="member-summary-card">
+                    <span>Telephone</span>
+                    <strong>@(string.IsNullOrWhiteSpace(Model.Telephone) ? "-" : Model.Telephone)</strong>
+                </div>
+            </div>
+
+            <form asp-action="Delete" method="post" style="margin-top:22px;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" asp-for="IdMembre" />
+
+                <div class="member-form-actions">
+                    <a asp-action="Index" class="member-btn-ghost">Annuler</a>
+                    <button type="submit" class="member-btn-danger">Supprimer definitivement</button>
+                </div>
+            </form>
+        </div>
+    </section>
+</div>

@@ -1,0 +1,226 @@
+@using GestionBibliotheque.Data
+@using Microsoft.EntityFrameworkCore
+@using System
+@using GestionBibliotheque.Constants
+@using GestionBibliotheque.Services
+@inject BibliothequeDbContext _db
+@inject ICurrentUserService CurrentUser
+
+@{
+    string? memberName = ViewBag.MembreNom as string
+        ?? CurrentUser.DisplayName;
+    memberName ??= "Utilisateur";
+
+    string? initiales = ViewBag.Initiales as string;
+    if (string.IsNullOrWhiteSpace(initiales))
+    {
+        var parts = memberName.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+        if (parts.Length >= 2)
+        {
+            initiales = $"{parts[0][0]}{parts[1][0]}".ToUpperInvariant();
+        }
+        else if (memberName.Length > 0)
+        {
+            initiales = memberName[0].ToString().ToUpperInvariant();
+        }
+        else
+        {
+            initiales = "?";
+        }
+    }
+
+    string? planLabel = ViewBag.AbonnementLibelle as string;
+    string currentRole = ViewBag.CurrentRole as string ?? CurrentUser.Role ?? string.Empty;
+    if (string.IsNullOrWhiteSpace(planLabel) && currentRole == ApplicationRoles.Membre)
+    {
+        int? memberId = CurrentUser.MembreId;
+        if (memberId.HasValue)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var abonnement = _db.Abonnements
+                .Include(a => a.IdTypeNavigation)
+                .Where(a => a.IdMembre == memberId.Value
+                         && a.Statut == AbonnementStatuses.Actif
+                         && a.StatutPaiement == PaiementStatuses.Paye
+                         && (!a.DateFin.HasValue || a.DateFin.Value >= today))
+                .OrderByDescending(a => a.IdAbonnment)
+                .FirstOrDefault();
+
+            planLabel = abonnement?.IdTypeNavigation?.Libelle;
+        }
+    }
+
+    planLabel ??= "MEMBRE";
+    var activePage = ViewData["ActivePage"]?.ToString() ?? string.Empty;
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Lumina Bibliotheque</title>
+    <link rel="stylesheet" href="~/css/member.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/member-portal.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+<aside class="sidebar member-sidebar">
+    <div class="sidebar-brand">
+                <div class="brand-icon">
+                    <span data-lucide="book-open"></span>
+                </div>
+        <div>
+            <div class="brand-name">Lumina</div>
+            <div class="brand-sub">MEMBRE PORTAIL</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a asp-controller="MemberDashboard" asp-action="Index" class="nav-item @(activePage == "Dashboard" ? "active" : "")">
+            <span data-lucide="layout-grid"></span>
+            Dashboard
+        </a>
+
+        <a asp-controller="Catalogue" asp-action="Index" class="nav-item @(activePage == "Catalogue" ? "active" : "")">
+            <span data-lucide="book-open"></span>
+            Catalogue
+        </a>
+
+        <a asp-controller="Emprunt" asp-action="MesEmprunts" class="nav-item @(activePage == "Emprunts" ? "active" : "")">
+            <span data-lucide="book-open-check"></span>
+            Emprunts
+        </a>
+
+        <a asp-controller="Emprunt" asp-action="Historique" class="nav-item @(activePage == "Historique" ? "active" : "")">
+            <span data-lucide="history"></span>
+            Historique
+        </a>
+
+        <a asp-controller="Reservation" asp-action="MesReservations" class="nav-item @(activePage == "Reservations" ? "active" : "")">
+            <span data-lucide="calendar-days"></span>
+            Reservations
+        </a>
+
+        <a asp-controller="Alerte" asp-action="MesAlertes" class="nav-item @(activePage == "Alertes" ? "active" : "")">
+            <span data-lucide="bell-plus"></span>
+            Alertes
+        </a>
+
+        <a asp-controller="Notification" asp-action="Index" class="nav-item @(activePage == "Notifications" ? "active" : "")">
+            <span data-lucide="mail"></span>
+            Notifications
+            @if ((ViewBag.NotificationCount as int? ?? ViewBag.NbNotifs as int? ?? 0) > 0)
+            {
+                <span class="nav-badge">@(ViewBag.NotificationCount as int? ?? ViewBag.NbNotifs as int? ?? 0)</span>
+            }
+        </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <a asp-controller="Abonnement" asp-action="Souscrire" class="nav-item @(activePage == "Abonnement" ? "active" : "")">
+            <span data-lucide="badge-check"></span>
+            S'abonner
+        </a>
+
+        <a asp-controller="Abonnement" asp-action="MonAbonnement" class="nav-item @(activePage == "MonAbonnement" ? "active" : "")">
+            <span data-lucide="badge-dollar-sign"></span>
+            Mon abonnement
+        </a>
+
+        <a asp-controller="Profil" asp-action="Index" class="nav-item @(activePage == "Profil" ? "active" : "")">
+            <span data-lucide="user-round"></span>
+            Profil
+        </a>
+
+        <form asp-controller="Auth" asp-action="Logout" method="post" style="margin:0">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="nav-item nav-logout">
+                <span data-lucide="log-out"></span>
+                Deconnexion
+            </button>
+        </form>
+    </div>
+</aside>
+
+<div class="main-wrapper">
+    <header class="topbar">
+        <button type="button" class="topbar-menu-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+            <span data-lucide="menu"></span>
+        </button>
+
+        <div class="topbar-search">
+            <span data-lucide="search"></span>
+            <input type="text" placeholder="Rechercher un livre, un auteur..." id="searchInput" />
+            <span class="search-kbd">Entrer</span>
+        </div>
+
+        <div class="topbar-right">
+            <a asp-controller="Notification" asp-action="Index" class="topbar-icon-btn notif-btn" title="Notifications">
+                <span data-lucide="bell"></span>
+                @if ((ViewBag.NotificationCount as int? ?? ViewBag.NbNotifs as int? ?? 0) > 0)
+                {
+                    <span class="notif-dot"></span>
+                }
+            </a>
+
+            <a asp-controller="Profil" asp-action="Index" class="topbar-icon-btn" title="Profil">
+                <span data-lucide="user-round"></span>
+            </a>
+
+            <div class="topbar-user">
+                <div class="user-info">
+                    <span class="user-name">@memberName</span>
+                    <span class="user-role">@planLabel</span>
+                </div>
+                <div class="user-avatar">@initiales</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-content">
+        @await Html.PartialAsync("_Alerts")
+        @RenderBody()
+    </main>
+</div>
+
+<script src="~/lib/lucide/lucide.min.js" asp-append-version="true"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    window.lucide?.createIcons();
+
+    document.getElementById('searchInput')?.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+            window.location.href = '/Catalogue?searchTerm=' + encodeURIComponent(this.value.trim());
+        }
+    });
+
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.getElementById('sidebarToggle');
+    const sidebarOverlay = document.getElementById('sidebarOverlay');
+
+    function closeSidebar() {
+        sidebar?.classList.remove('open');
+        sidebarOverlay?.classList.remove('show');
+    }
+
+    function openSidebar() {
+        sidebar?.classList.add('open');
+        sidebarOverlay?.classList.add('show');
+    }
+
+    sidebarToggle?.addEventListener('click', () => {
+        if (sidebar?.classList.contains('open')) {
+            closeSidebar();
+        } else {
+            openSidebar();
+        }
+    });
+
+    sidebarOverlay?.addEventListener('click', closeSidebar);
+</script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

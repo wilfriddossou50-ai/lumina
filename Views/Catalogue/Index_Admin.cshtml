@@ -1,0 +1,169 @@
+@model List<GestionBibliotheque.Models.Livre>
+
+@{
+    ViewData["Title"] = "Catalogue - Gestion des Livres";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    var livresParCategorie = ViewBag.LivresParCategorie as Dictionary<string, List<GestionBibliotheque.Models.Livre>> ?? new();
+    var categories   = new[] { "Roman", "Science", "Informatique", "Histoire", "Art" };
+    var colors       = new[] { "#3b82f6", "#8b5cf6", "#ec4899", "#f59e0b", "#10b981" };
+    string searchTerm     = ViewData["SearchTerm"] as string ?? "";
+    string selectedCat    = ViewData["SelectedCategory"] as string ?? "";
+}
+
+<!-- ══ HERO ══════════════════════════════════════════════════ -->
+<div class="dash-hero">
+    <div class="dash-welcome">
+        <h1>Catalogue</h1>
+        <p>Gestion complète des livres par catégories</p>
+    </div>
+    <a asp-action="Create" class="admin-cta">
+        <span data-lucide="book-plus"></span>
+        Ajouter un Livre
+    </a>
+</div>
+
+<!-- ══ MESSAGES ══════════════════════════════════════════════ -->
+@if (TempData["Success"] != null)
+{
+    <div style="background:#f0fdf4;border:1px solid #86efac;color:#166534;padding:0.875rem 1.25rem;border-radius:8px;margin-bottom:1.25rem;font-size:0.875rem;font-weight:500;">
+        ✓ @TempData["Success"]
+    </div>
+}
+@if (TempData["Error"] != null)
+{
+    <div style="background:#fef2f2;border:1px solid #fca5a5;color:#991b1b;padding:0.875rem 1.25rem;border-radius:8px;margin-bottom:1.25rem;font-size:0.875rem;font-weight:500;">
+        ✕ @TempData["Error"]
+    </div>
+}
+
+<!-- ══ BARRE DE RECHERCHE ════════════════════════════════════ -->
+<div class="dash-card" style="margin-bottom:1.5rem;">
+    <form method="get" class="catalogue-filter-form">
+        <div>
+            <label for="searchTerm">Rechercher</label>
+            <input type="text" id="searchTerm" name="searchTerm" placeholder="Titre, auteur..."
+                   value="@searchTerm" />
+        </div>
+        <div>
+            <label for="category">Catégorie</label>
+            <select id="category" name="category">
+                <option value="">Toutes</option>
+                @foreach (var cat in categories)
+                {
+                    @if (selectedCat == cat)
+                    {
+                        <option value="@cat" selected>@cat</option>
+                    }
+                    else
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                }
+                </select>
+        </div>
+        <div class="catalogue-filter-actions">
+            <button type="submit" class="admin-cta">
+                <span data-lucide="search"></span>
+                Rechercher
+            </button>
+            @if (!string.IsNullOrEmpty(searchTerm) || !string.IsNullOrEmpty(selectedCat))
+            {
+                <a asp-action="Index" class="admin-cta-secondary">
+                    Réinitialiser
+                </a>
+            }
+        </div>
+    </form>
+</div>
+
+<!-- ══ STATS PAR CATÉGORIE ═══════════════════════════════════ -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:1rem;margin-bottom:1.5rem;">
+    @for (int i = 0; i < categories.Length; i++)
+    {
+        var cat   = categories[i];
+        var count = livresParCategorie.ContainsKey(cat) ? livresParCategorie[cat].Count : 0;
+        var color = colors[i];
+        <div class="dash-card" style="text-align:center;padding:1.25rem;cursor:pointer;"
+             onclick="window.location='@Url.Action("Index", new { category = cat })'">
+            <div style="font-size:1.75rem;font-weight:700;color:@color;line-height:1;margin-bottom:0.4rem;">@count</div>
+            <div style="color:var(--text-muted);font-size:0.82rem;font-weight:500;">@cat</div>
+        </div>
+    }
+</div>
+
+<!-- ══ TABLEAU PAR CATÉGORIE ═════════════════════════════════ -->
+@if (!string.IsNullOrEmpty(selectedCat))
+{
+    var livresFiltres = livresParCategorie.ContainsKey(selectedCat) ? livresParCategorie[selectedCat] : new List<GestionBibliotheque.Models.Livre>();
+    <div class="dash-card">
+        <div class="card-header">
+            <div class="card-title">@selectedCat</div>
+            <span style="font-size:0.75rem;color:var(--text-muted);">@livresFiltres.Count livre@(livresFiltres.Count > 1 ? "s" : "")</span>
+        </div>
+        @if (!livresFiltres.Any())
+        {
+            <div class="empty-state"><p>Aucun livre dans cette catégorie.</p></div>
+        }
+        else
+        {
+            @await Html.PartialAsync("_TableLivres", livresFiltres)
+        }
+    </div>
+}
+else
+{
+    @foreach (var cat in categories)
+    {
+        var livres = livresParCategorie.ContainsKey(cat) ? livresParCategorie[cat] : new();
+        <div class="dash-card" style="margin-bottom:1.25rem;">
+            <div class="card-header">
+                <div class="card-title">@cat</div>
+                <div style="display:flex;align-items:center;gap:1rem;">
+                    <span style="font-size:0.75rem;color:var(--text-muted);">@livres.Count livre@(livres.Count > 1 ? "s" : "")</span>
+                    @if (livres.Count > 5)
+                    {
+                        <a asp-action="Index" asp-route-category="@cat"
+                           style="font-size:0.8rem;color:var(--blue);font-weight:500;text-decoration:none;">Voir tout →</a>
+                    }
+                </div>
+            </div>
+            @if (!livres.Any())
+            {
+                <div class="empty-state"><p>Aucun livre dans cette catégorie.</p></div>
+            }
+            else
+            {
+                @await Html.PartialAsync("_TableLivres", livres.Take(5).ToList())
+            }
+        </div>
+    }
+}
+
+@Html.AntiForgeryToken()
+
+@section Scripts {
+<script>
+const token = document.querySelector('input[name="__RequestVerificationToken"]')?.value ?? '';
+
+document.querySelectorAll('.btn-delete').forEach(btn => {
+    btn.addEventListener('click', function () {
+        const id = parseInt(this.dataset.id);
+        if (!confirm('Supprimer ce livre définitivement ?')) return;
+
+        fetch('@Url.Action("Delete")', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'RequestVerificationToken': token
+            },
+            body: JSON.stringify(id)
+        })
+        .then(r => r.json())
+        .then(data => {
+            if (data.success) location.reload();
+            else alert('Erreur : ' + data.message);
+        });
+    });
+});
+</script>
+}

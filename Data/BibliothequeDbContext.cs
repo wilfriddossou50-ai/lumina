@@ -2,11 +2,16 @@
 using System.Collections.Generic;
 using GestionBibliotheque.Models;
 using Microsoft.EntityFrameworkCore;
+using Pomelo.EntityFrameworkCore.MySql.Scaffolding.Internal;
 
 namespace GestionBibliotheque.Data;
 
 public partial class BibliothequeDbContext : DbContext
 {
+    public BibliothequeDbContext()
+    {
+    }
+
     public BibliothequeDbContext(DbContextOptions<BibliothequeDbContext> options)
         : base(options)
     {
@@ -50,21 +55,40 @@ public partial class BibliothequeDbContext : DbContext
 
             entity.HasIndex(e => e.IdMembre, "FK_SOUSCRIRE");
 
+            entity.HasIndex(e => e.CodeReference, "UK_CODE_REFERENCE").IsUnique();
+
             entity.Property(e => e.IdAbonnment)
                 .HasColumnType("int(11)")
                 .HasColumnName("ID_ABONNMENT");
+            entity.Property(e => e.CodeReference)
+                .HasMaxLength(30)
+                .HasColumnName("CODE_REFERENCE");
             entity.Property(e => e.DateDebut).HasColumnName("DATE_DEBUT");
             entity.Property(e => e.DateFin).HasColumnName("DATE_FIN");
+            entity.Property(e => e.DatePaiement)
+                .HasColumnType("datetime")
+                .HasColumnName("DATE_PAIEMENT");
             entity.Property(e => e.IdMembre)
                 .HasColumnType("int(11)")
                 .HasColumnName("ID_MEMBRE");
             entity.Property(e => e.IdType)
                 .HasColumnType("int(11)")
                 .HasColumnName("ID_TYPE");
+            entity.Property(e => e.ModePaiement)
+                .HasMaxLength(20)
+                .HasColumnName("MODE_PAIEMENT");
             entity.Property(e => e.Montant).HasColumnName("MONTANT");
+            entity.Property(e => e.ReferencePaiement)
+                .HasMaxLength(50)
+                .HasColumnName("REFERENCE_PAIEMENT");
             entity.Property(e => e.Statut)
-                .HasMaxLength(10)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("'inactif'")
                 .HasColumnName("STATUT");
+            entity.Property(e => e.StatutPaiement)
+                .HasMaxLength(20)
+                .HasDefaultValueSql("'en_attente'")
+                .HasColumnName("STATUT_PAIEMENT");
 
             entity.HasOne(d => d.IdMembreNavigation).WithMany(p => p.Abonnements)
                 .HasForeignKey(d => d.IdMembre)

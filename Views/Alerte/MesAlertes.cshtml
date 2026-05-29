@@ -1,0 +1,91 @@
+@model List<GestionBibliotheque.Models.Alerte>
+@{
+    ViewData["Title"] = "Mes alertes";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/message-center.css" asp-append-version="true" />
+}
+
+<div class="message-page">
+    <div class="message-hero">
+        <div>
+            <h1>Mes alertes</h1>
+            <p>Suivez vos demandes de notification de disponibilite et supprimez-les facilement.</p>
+        </div>
+        <div class="message-toolbar">
+            <form asp-action="SupprimerToutes" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="message-btn message-btn-danger">Supprimer toutes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="message-card">
+        <div class="message-card-head">
+            <div>
+                <h2>Alertes personnelles</h2>
+                <p>@(Model?.Count ?? 0) alerte(s) active(s) ou archivee(s)</p>
+            </div>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="message-empty">
+                <p>Vous n'avez pas encore cree d'alerte.</p>
+                <p>Si un livre est indisponible, demandez une notification depuis sa fiche.</p>
+            </div>
+        }
+        else
+        {
+            <div class="message-table-wrap">
+                <table class="message-table">
+                    <thead>
+                        <tr>
+                            <th>Livre</th>
+                            <th>Demandee le</th>
+                            <th>Etat</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var alerte in Model)
+                        {
+                            <tr>
+                                <td>
+                                    <a asp-controller="Catalogue" asp-action="Details" asp-route-id="@alerte.IdLivre" class="message-book-link">
+                                        @alerte.IdLivreNavigation?.Titre
+                                    </a>
+                                </td>
+                                <td>@alerte.DateDemande?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (alerte.EstTraitee == true)
+                                    {
+                                        <span class="message-status message-status-green">Traitee</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="message-status message-status-amber">En attente</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="message-actions">
+                                        @if (alerte.EstTraitee != true)
+                                        {
+                                            <form asp-action="Supprimer" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@alerte.IdAlerte" />
+                                                <button type="submit" class="message-btn message-btn-danger">Supprimer</button>
+                                            </form>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

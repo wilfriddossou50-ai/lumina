@@ -1,0 +1,201 @@
+@model List<GestionBibliotheque.Models.Abonnement>
+@{
+    ViewData["Title"] = "Abonnements";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string statutFiltre = ViewBag.StatutFiltre ?? "pending";
+    int countPending = (int)(ViewBag.CountPending ?? 0);
+    int countActif = (int)(ViewBag.CountActif ?? 0);
+    int countExpired = (int)(ViewBag.CountExpired ?? 0);
+    int totalElements = Model?.Count ?? 0;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-abonnement.css" asp-append-version="true" />
+}
+
+<div class="abo-admin-page">
+    <section class="abo-hero">
+        <div>
+            <span class="abo-eyebrow">Gestion des abonnements</span>
+            <h1>Pilotage des demandes et plans</h1>
+            <p>
+                Suis les validations en attente, garde une vue nette sur les abonnements
+                actifs et ajuste les plans sans quitter l'espace d'administration.
+            </p>
+        </div>
+
+        <div class="abo-hero-side">
+            <a asp-action="Plans" class="abo-btn">Gerer les plans</a>
+            <div class="abo-hero-note">
+                <strong>@countPending demande(s) en attente</strong>
+                <span>Le traitement rapide des validations améliore l'experience membre.</span>
+            </div>
+            <div class="abo-mini-card">
+                <strong>@countActif abonnement(s) actif(s)</strong>
+                <span>Les abonnements actifs correspondent aux acces deja valides.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="abo-stats">
+        <article class="abo-stat">
+            <span class="abo-stat-label">EN ATTENTE</span>
+            <span class="abo-stat-value">@countPending</span>
+            <span class="abo-stat-sub">Demandes a traiter par l'administration</span>
+        </article>
+
+        <article class="abo-stat">
+            <span class="abo-stat-label">ACTIFS</span>
+            <span class="abo-stat-value">@countActif</span>
+            <span class="abo-stat-sub">Abonnements actuellement en service</span>
+        </article>
+
+        <article class="abo-stat">
+            <span class="abo-stat-label">RESULTATS</span>
+            <span class="abo-stat-value">@totalElements</span>
+            <span class="abo-stat-sub">Elements visibles dans la vue courante</span>
+        </article>
+    </section>
+
+    <section class="abo-toolbar">
+        <div class="abo-tabs">
+            <a asp-action="Index" asp-route-statut="pending" class="abo-tab @(statutFiltre == "pending" ? "active" : "")">
+                En attente
+                <span class="abo-badge-count">@countPending</span>
+            </a>
+
+            <a asp-action="Index" asp-route-statut="actif" class="abo-tab @(statutFiltre == "actif" ? "active" : "")">
+                Actifs
+                <span class="abo-badge-count">@countActif</span>
+            </a>
+
+            <a asp-action="Index" asp-route-statut="expired" class="abo-tab @(statutFiltre == "expired" ? "active" : "")">
+                Expirés
+                <span class="abo-badge-count">@countExpired</span>
+            </a>
+        </div>
+    </section>
+
+    <section class="abo-panel">
+        <div class="abo-panel-header">
+            <div>
+                <h2>@(statutFiltre == "actif" ? "Abonnements actifs" : "Demandes en attente de validation")</h2>
+                <p>
+                    @(statutFiltre == "actif"
+                        ? "Liste des abonnements deja valides et actifs."
+                        : "Valide ou refuse les demandes qui necessitent une action.")
+                </p>
+            </div>
+            <p class="abo-result">@totalElements resultat@(totalElements > 1 ? "s" : "")</p>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="abo-empty">
+                Aucun abonnement dans cette categorie.
+            </div>
+        }
+        else
+        {
+            <div class="abo-table-wrap">
+                <table class="abo-table">
+                    <thead>
+                        <tr>
+                            <th>Membre</th>
+                            <th>Paiement</th>
+                            <th>Plan</th>
+                            <th>Montant</th>
+                            <th>Statut</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var a in Model)
+                        {
+                            var nom = $"{a.IdMembreNavigation?.Prenom} {a.IdMembreNavigation?.Nom}".Trim();
+                            var plan = a.IdTypeNavigation?.Libelle ?? "-";
+                            var montant = a.Montant > 0 ? $"{a.Montant:0} FCFA" : "Gratuit";
+                            var paiement = a.ModePaiement?.ToUpper() ?? "-";
+                            var statutPaiement = (a.StatutPaiement ?? string.Empty).ToLowerInvariant();
+                            var statutAbonnement = (a.Statut ?? string.Empty).ToLowerInvariant();
+                            var statutCss = statutPaiement == "en_attente"
+                                ? "pending"
+                                : statutPaiement == "refuse"
+                                    ? "refused"
+                                    : statutAbonnement == "actif"
+                                        ? "active"
+                                        : "inactive";
+                            var statutLabel = statutPaiement == "en_attente"
+                                ? "En attente"
+                                : statutPaiement == "refuse"
+                                    ? "Refuse"
+                                    : statutAbonnement == "actif"
+                                        ? "Actif"
+                                        : "Expiré";
+
+                            <tr>
+                                <td>
+                                    <div class="abo-member">
+                                        <strong>@nom</strong>
+                                        <span>ID abonnement #@a.IdAbonnment</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="abo-payment">
+                                        <strong>@paiement</strong>
+                                        <span>@(string.IsNullOrWhiteSpace(a.ModePaiement) ? "-" : a.ModePaiement)</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="abo-plan">
+                                        <strong>@plan</strong>
+                                        <span>Reference @a.CodeReference</span>
+                                    </div>
+                                </td>
+                                <td>@montant</td>
+                                <td>
+                                    <span class="abo-status @statutCss">@statutLabel</span>
+                                </td>
+                                <td>
+                                    <div class="abo-actions">
+                                        @if (statutPaiement == "en_attente")
+                                        {
+                                            <form asp-action="Valider" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@a.IdAbonnment" />
+                                                <button type="submit" class="abo-btn-secondary">Valider</button>
+                                            </form>
+
+                                            <form asp-action="Refuser" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@a.IdAbonnment" />
+                                                <button type="submit" class="abo-btn-danger" onclick="return confirm('Refuser cette demande ?')">Refuser</button>
+                                            </form>
+                                        }
+                                        else
+                                        {
+                                            <span class="abo-meta">Aucune action requise</span>
+                                        }
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+
+    <section class="abo-actions-grid">
+        <article class="abo-action-card">
+            <h3>Gerer les plans d'abonnement</h3>
+            <p>Ajuste les libelles et tarifs proposes aux membres depuis une interface dediee.</p>
+            <a asp-action="Plans" class="abo-btn-secondary">Ouvrir les plans</a>
+        </article>
+
+        <article class="abo-action-card">
+            <h3>Priorite du jour</h3>
+            <p>Commence toujours par la file d'attente pour eviter que les demandes payees restent bloquees.</p>
+        </article>
+    </section>
+</div>

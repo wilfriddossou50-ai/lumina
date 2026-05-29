@@ -1,0 +1,97 @@
+@model List<GestionBibliotheque.Models.Alerte>
+@{
+    ViewData["Title"] = "Alertes";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/message-center.css" asp-append-version="true" />
+}
+
+<div class="message-page">
+    <div class="message-hero">
+        <div>
+            <h1>Alertes de disponibilite</h1>
+            <p>Traitez les alertes des membres, ou nettoyez rapidement la liste si besoin.</p>
+        </div>
+        <div class="message-toolbar">
+            <form asp-action="SupprimerToutesAdmin" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="message-btn message-btn-danger">Supprimer toutes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="message-card">
+        <div class="message-card-head">
+            <div>
+                <h2>File des alertes</h2>
+                <p>@(Model?.Count ?? 0) alerte(s) enregistree(s)</p>
+            </div>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="message-empty">
+                <p>Aucune alerte n'est en cours.</p>
+            </div>
+        }
+        else
+        {
+            <div class="message-table-wrap">
+                <table class="message-table">
+                    <thead>
+                        <tr>
+                            <th>Membre</th>
+                            <th>Livre</th>
+                            <th>Demandee le</th>
+                            <th>Etat</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var alerte in Model)
+                        {
+                            var titre = alerte.IdLivreNavigation?.Titre ?? "Livre inconnu";
+                            var nomMembre = string.Join(" ", new[] { alerte.IdMembreNavigation?.Prenom, alerte.IdMembreNavigation?.Nom }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                            <tr>
+                                <td>@(string.IsNullOrWhiteSpace(nomMembre) ? "-" : nomMembre)</td>
+                                <td>
+                                    <a asp-controller="Catalogue" asp-action="Details" asp-route-id="@alerte.IdLivre" class="message-book-link">@titre</a>
+                                </td>
+                                <td>@alerte.DateDemande?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    @if (alerte.EstTraitee == true)
+                                    {
+                                        <span class="message-status message-status-green">Traitee</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="message-status message-status-amber">En attente</span>
+                                    }
+                                </td>
+                                <td>
+                                    <div class="message-actions">
+                                        @if (alerte.EstTraitee != true)
+                                        {
+                                            <form asp-action="Traiter" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@alerte.IdAlerte" />
+                                                <button type="submit" class="message-btn message-btn-primary">Traiter</button>
+                                            </form>
+                                        }
+                                        <form asp-action="SupprimerAdmin" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@alerte.IdAlerte" />
+                                            <button type="submit" class="message-btn message-btn-danger">Supprimer</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

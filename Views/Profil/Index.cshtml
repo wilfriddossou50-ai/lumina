@@ -1,0 +1,220 @@
+@model GestionBibliotheque.ViewModels.ProfilPageViewModel
+
+@{
+    ViewData["Title"] = "Profil";
+    Layout = Model.IsAdmin
+        ? "~/Views/Shared/_AdminLayout.cshtml"
+        : "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile.css" asp-append-version="true" />
+}
+
+<div class="profile-page">
+    <section class="profile-hero profile-hero-rich">
+        <div class="profile-hero-copy">
+            <span class="profile-eyebrow">Espace personnel</span>
+            <h1>Mon profil</h1>
+            <p>
+                Consultez vos informations, mettez a jour vos coordonnees et
+                securisez votre compte depuis une seule page.
+            </p>
+
+            <div class="profile-hero-tags">
+                <span class="profile-hero-tag">@(Model.IsAdmin ? "Administrateur" : "Membre")</span>
+                <span class="profile-hero-tag">@Model.Profile.Login</span>
+                <span class="profile-hero-tag">@(string.IsNullOrWhiteSpace(Model.Profile.Statut) ? "Actif" : Model.Profile.Statut)</span>
+            </div>
+        </div>
+
+        <a asp-controller="@Model.DashboardController" asp-action="Index" class="profile-secondary-link">
+            @Model.DashboardLabel
+        </a>
+    </section>
+
+    <div class="profile-shell">
+        <aside class="profile-summary-card">
+            <div class="profile-summary-top">
+                <div class="profile-avatar">@Model.Initials</div>
+                <div>
+                    <h2>@Model.DisplayName</h2>
+                    <p class="profile-summary-role">@(Model.IsAdmin ? "Administrateur" : "Membre")</p>
+                </div>
+            </div>
+
+            <div class="profile-quick-grid">
+                <div class="profile-quick-item">
+                    <span class="profile-summary-label">Login</span>
+                    <strong>@Model.Profile.Login</strong>
+                </div>
+                <div class="profile-quick-item">
+                    <span class="profile-summary-label">Role</span>
+                    <strong>@Model.Profile.Role</strong>
+                </div>
+                <div class="profile-quick-item">
+                    <span class="profile-summary-label">Statut</span>
+                    <strong>@(string.IsNullOrWhiteSpace(Model.Profile.Statut) ? "Actif" : Model.Profile.Statut)</strong>
+                </div>
+                <div class="profile-quick-item">
+                    <span class="profile-summary-label">Inscription</span>
+                    <strong>@(Model.Profile.DateInscription?.ToString("dd/MM/yyyy") ?? "-")</strong>
+                </div>
+            </div>
+
+            <div class="profile-summary-note">
+                @if (Model.IsAdmin)
+                {
+                    <p>Utilisez cette page pour garder votre acces administrateur a jour et securise.</p>
+                }
+                else
+                {
+                    <p>Des informations precises facilitent les notifications, les reservations et le suivi de vos emprunts.</p>
+                }
+            </div>
+        </aside>
+
+        <div class="profile-main">
+            <section class="profile-card">
+                <div class="profile-card-head">
+                    <div>
+                        <h3>Informations du compte</h3>
+                        <p>Modifiez les donnees principales de votre espace personnel.</p>
+                    </div>
+                </div>
+
+                <form asp-action="UpdateProfile" method="post" class="profile-form" novalidate>
+                    @Html.AntiForgeryToken()
+                    <input type="hidden" asp-for="Profile.IdUtilisateur" />
+                    <input type="hidden" asp-for="Profile.IdMembre" />
+
+                    <div asp-validation-summary="ModelOnly" class="profile-validation-summary"></div>
+
+                    <div class="profile-section-label">Compte</div>
+                    <div class="profile-grid">
+                        <div class="profile-field">
+                            <label asp-for="Profile.Login">Login</label>
+                            <input asp-for="Profile.Login" class="profile-input" autocomplete="username" />
+                            <span asp-validation-for="Profile.Login" class="profile-error"></span>
+                        </div>
+
+                        <div class="profile-field">
+                            <label asp-for="Profile.Role">Role</label>
+                            <input asp-for="Profile.Role" class="profile-input profile-input-readonly" readonly />
+                        </div>
+                    </div>
+
+                    @if (Model.Profile.IdMembre.HasValue)
+                    {
+                        <div class="profile-section-label">Informations personnelles</div>
+                        <div class="profile-grid">
+                            <div class="profile-field">
+                                <label asp-for="Profile.Prenom">Prenom</label>
+                                <input asp-for="Profile.Prenom" class="profile-input" />
+                                <span asp-validation-for="Profile.Prenom" class="profile-error"></span>
+                            </div>
+
+                            <div class="profile-field">
+                                <label asp-for="Profile.Nom">Nom</label>
+                                <input asp-for="Profile.Nom" class="profile-input" />
+                                <span asp-validation-for="Profile.Nom" class="profile-error"></span>
+                            </div>
+
+                            <div class="profile-field">
+                                <label asp-for="Profile.Sexe">Sexe</label>
+                                <select asp-for="Profile.Sexe" class="profile-input">
+                                    <option value="">Selectionner</option>
+                                    <option value="Homme">Homme</option>
+                                    <option value="Femme">Femme</option>
+                                    <option value="Autre">Autre</option>
+                                </select>
+                                <span asp-validation-for="Profile.Sexe" class="profile-error"></span>
+                            </div>
+
+                            <div class="profile-field">
+                                <label asp-for="Profile.Telephone">Telephone</label>
+                                <input asp-for="Profile.Telephone" class="profile-input" autocomplete="tel" />
+                                <span asp-validation-for="Profile.Telephone" class="profile-error"></span>
+                            </div>
+
+                            <div class="profile-field">
+                                <label asp-for="Profile.Mail">Email</label>
+                                <input asp-for="Profile.Mail" class="profile-input" type="email" autocomplete="email" />
+                                <span asp-validation-for="Profile.Mail" class="profile-error"></span>
+                            </div>
+
+                            <div class="profile-field">
+                                <label asp-for="Profile.Statut">Statut</label>
+                                <input asp-for="Profile.Statut" class="profile-input profile-input-readonly" readonly />
+                            </div>
+
+                            <div class="profile-field profile-field-full">
+                                <label asp-for="Profile.Adresse">Adresse</label>
+                                <textarea asp-for="Profile.Adresse" class="profile-input profile-textarea" rows="4"></textarea>
+                                <span asp-validation-for="Profile.Adresse" class="profile-error"></span>
+                            </div>
+
+                            <div class="profile-field">
+                                <label>Date d'inscription</label>
+                                <input value="@(Model.Profile.DateInscription?.ToString("dd/MM/yyyy") ?? "-")" class="profile-input profile-input-readonly" readonly />
+                            </div>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="profile-inline-panel profile-field-full">
+                            <h4>Compte administrateur</h4>
+                            <p>Ce compte n'est pas rattache a une fiche membre. Vous pouvez modifier ici le login et le mot de passe.</p>
+                        </div>
+                    }
+
+                    <div class="profile-actions">
+                        <button type="submit" class="profile-primary-btn">Enregistrer</button>
+                        <a asp-controller="@Model.DashboardController" asp-action="Index" class="profile-secondary-btn">Annuler</a>
+                    </div>
+                </form>
+            </section>
+
+            <section class="profile-card">
+                <div class="profile-card-head">
+                    <div>
+                        <h3>Securite</h3>
+                        <p>Changez votre mot de passe sans quitter cette page.</p>
+                    </div>
+                </div>
+
+                <form asp-action="ChangePassword" method="post" class="profile-form profile-form-compact" novalidate>
+                    @Html.AntiForgeryToken()
+
+                    <div class="profile-grid profile-grid-security">
+                        <div class="profile-field">
+                            <label asp-for="Password.CurrentPassword">Mot de passe actuel</label>
+                            <input asp-for="Password.CurrentPassword" type="password" class="profile-input" autocomplete="current-password" />
+                            <span asp-validation-for="Password.CurrentPassword" class="profile-error"></span>
+                        </div>
+
+                        <div class="profile-field">
+                            <label asp-for="Password.NewPassword">Nouveau mot de passe</label>
+                            <input asp-for="Password.NewPassword" type="password" class="profile-input" autocomplete="new-password" />
+                            <span asp-validation-for="Password.NewPassword" class="profile-error"></span>
+                        </div>
+
+                        <div class="profile-field">
+                            <label asp-for="Password.ConfirmPassword">Confirmation</label>
+                            <input asp-for="Password.ConfirmPassword" type="password" class="profile-input" autocomplete="new-password" />
+                            <span asp-validation-for="Password.ConfirmPassword" class="profile-error"></span>
+                        </div>
+                    </div>
+
+                    <div class="profile-actions">
+                        <button type="submit" class="profile-primary-btn">Mettre a jour le mot de passe</button>
+                    </div>
+                </form>
+            </section>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+}

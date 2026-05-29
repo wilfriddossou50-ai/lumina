@@ -1,0 +1,119 @@
+@model List<GestionBibliotheque.Models.Notification>
+@{
+    ViewData["Title"] = "Notifications";
+    var role = ViewBag.CurrentRole as string ?? "";
+    Layout = role == "admin" ? "~/Views/Shared/_AdminLayout.cshtml" : "~/Views/Shared/_MemberLayout.cshtml";
+    int totalNotifications = Model?.Count ?? 0;
+    int nonLues = Model?.Count(n => n.EstLue != true) ?? 0;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/message-center.css" asp-append-version="true" />
+}
+
+<div class="message-page">
+    <div class="message-hero">
+        <div>
+            <h1>Notifications</h1>
+            <p>Consultez vos messages recents, marquez-les comme lus ou videz la liste en un clic.</p>
+            <div class="message-stats">
+                <span class="message-stat">
+                    <strong>@totalNotifications</strong>
+                    total
+                </span>
+                <span class="message-stat">
+                    <strong>@nonLues</strong>
+                    non lues
+                </span>
+            </div>
+        </div>
+        <div class="message-toolbar">
+            <form asp-action="MarkAllAsRead" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="message-btn message-btn-secondary">Tout marquer lu</button>
+            </form>
+            <form asp-action="DeleteAll" method="post">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="message-btn message-btn-danger">Supprimer toutes</button>
+            </form>
+        </div>
+    </div>
+
+    <div class="message-card">
+        <div class="message-card-head">
+            <div>
+                <h2>Boite de notifications</h2>
+                <p>@totalNotifications notification(s) disponible(s)</p>
+            </div>
+            <span class="message-status @(nonLues > 0 ? "message-status-blue" : "message-status-green")">
+                @(nonLues > 0 ? $"{nonLues} non lue(s)" : "Tout est lu")
+            </span>
+        </div>
+
+        @if (Model == null || !Model.Any())
+        {
+            <div class="message-empty">
+                <p>Aucune notification pour le moment.</p>
+            </div>
+        }
+        else
+        {
+            <div class="message-table-wrap message-scroll">
+                <table class="message-table">
+                    <thead>
+                        <tr>
+                            <th>Titre</th>
+                            <th>Message</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var notification in Model)
+                        {
+                            bool nonLue = notification.EstLue != true;
+                            <tr class="@(nonLue ? "is-unread" : string.Empty)">
+                                <td>
+                                    <div class="message-title">
+                                        <span>@notification.Titre</span>
+                                        @if (nonLue)
+                                        {
+                                            <span class="message-status message-status-blue">Non lue</span>
+                                        }
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="message-body">
+                                        @(string.IsNullOrWhiteSpace(notification.Message) ? "-" : notification.Message)
+                                    </div>
+                                </td>
+                                <td>@notification.DateCreation?.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>
+                                    <div class="message-actions">
+                                        @if (!string.IsNullOrWhiteSpace(notification.Lien))
+                                        {
+                                            <a href="@notification.Lien" class="message-link-btn message-link-btn-secondary">Voir</a>
+                                        }
+                                        @if (nonLue)
+                                        {
+                                            <form asp-action="MarkAsRead" method="post">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="id" value="@notification.IdNotification" />
+                                                <button type="submit" class="message-btn message-btn-primary">Marquer lu</button>
+                                            </form>
+                                        }
+                                        <form asp-action="Delete" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="id" value="@notification.IdNotification" />
+                                            <button type="submit" class="message-btn message-btn-danger">Supprimer</button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>

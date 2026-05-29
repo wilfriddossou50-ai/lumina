@@ -19,6 +19,16 @@ public partial class Abonnement
 
     public string? Statut { get; set; }
 
+    public string? ModePaiement { get; set; }
+
+    public string? ReferencePaiement { get; set; }
+
+    public DateTime? DatePaiement { get; set; }
+
+    public string? StatutPaiement { get; set; }
+
+    public string? CodeReference { get; set; }
+
     public virtual Membre IdMembreNavigation { get; set; } = null!;
 
     public virtual TypeAbonnement? IdTypeNavigation { get; set; }

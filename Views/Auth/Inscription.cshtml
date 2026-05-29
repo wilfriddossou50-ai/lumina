@@ -29,12 +29,6 @@
 
         <hr class="auth-divider" />
 
-        <!-- Messages de succès/erreur -->
-        @if (TempData["Success"] != null)
-        {
-            <div class="alert-success">@TempData["Success"]</div>
-        }
-
         <form asp-action="Inscription" asp-controller="Auth" method="post" id="registerForm">
             @Html.AntiForgeryToken()
 
@@ -145,7 +139,7 @@
                     <input asp-for="AccepterConditions" type="checkbox" />
                     <span>
                         J'accepte les <a href="#" class="link-blue">conditions générales d'utilisation</a>
-                        et la politique de confidentialité de Lumina Library.
+                        et la politique de confidentialité de Lumina Bibliotheque.
                     </span>
                 </label>
                 <span asp-validation-for="AccepterConditions" class="field-error"></span>
@@ -163,7 +157,7 @@
 
     <!-- Footer bas de page -->
     <div class="auth-page-footer">
-        <span>© 2024 Lumina Library. All rights reserved.</span>
+        <span>© 2024 Lumina Bibliotheque. All rights reserved.</span>
         <div class="auth-page-footer-links">
             <a href="#">Aide</a>
             <a href="#">Contact</a>

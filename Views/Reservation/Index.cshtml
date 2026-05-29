@@ -1,0 +1,148 @@
+@model List<GestionBibliotheque.Models.Reservation>
+@{
+    ViewData["Title"] = "Réservations";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+    string statutFiltre = ViewBag.StatutFiltre ?? "en_attente";
+}
+
+<div style="display:flex; align-items:flex-end; justify-content:space-between;
+            gap:1rem; flex-wrap:wrap; margin-bottom:1rem;">
+    <div>
+        <div style="font-size:1.35rem; font-weight:800; color:var(--text-main);">
+            Réservations
+        </div>
+        <div style="margin-top:0.2rem; color:var(--text-muted); font-size:0.95rem;">
+            Gérez et convertissez les réservations en emprunts.
+        </div>
+    </div>
+</div>
+
+@* ── Onglets ─────────────────────────────────────────────────────────────── *@
+<div style="display:flex; gap:0.75rem; margin-bottom:1rem; flex-wrap:wrap;">
+    <a asp-action="Index" asp-route-statut="en_attente"
+       class="btn-sm @(statutFiltre == "en_attente" ? "btn-sm-primary" : "btn-sm-outline")">
+        En attente
+        @if ((int)(ViewBag.CountEnAttente ?? 0) > 0)
+        {
+            <span style="margin-left:0.4rem; background:#ef4444; color:white;
+                         font-size:0.7rem; font-weight:700; padding:0.1rem 0.45rem;
+                         border-radius:999px;">@ViewBag.CountEnAttente</span>
+        }
+    </a>
+    <a asp-action="Index" asp-route-statut="disponible"
+       class="btn-sm @(statutFiltre == "disponible" ? "btn-sm-primary" : "btn-sm-outline")">
+        Disponibles
+        @if ((int)(ViewBag.CountDisponible ?? 0) > 0)
+        {
+            <span style="margin-left:0.4rem; background:#f59e0b; color:white;
+                         font-size:0.7rem; font-weight:700; padding:0.1rem 0.45rem;
+                         border-radius:999px;">@ViewBag.CountDisponible</span>
+        }
+    </a>
+    <a asp-action="Index" asp-route-statut="honoree"
+       class="btn-sm @(statutFiltre == "honoree" ? "btn-sm-primary" : "btn-sm-outline")">
+        Honorées
+    </a>
+</div>
+
+<div class="dash-card">
+    <div class="card-header" style="margin-bottom:1rem;">
+        <div class="card-title">
+            @(statutFiltre == "en_attente" ? "Réservations en attente"
+              : statutFiltre == "disponible" ? "Livres disponibles à récupérer"
+              : "Réservations honorées")
+        </div>
+        <span style="font-size:0.8rem; color:var(--text-muted);">
+            @(Model?.Count ?? 0) résultat@(Model?.Count > 1 ? "s" : "")
+        </span>
+    </div>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state">
+            <p>Aucune réservation dans cette catégorie.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-container">
+            <table class="act-table">
+                <thead>
+                    <tr>
+                        <th>Membre</th>
+                        <th>Livre</th>
+                        <th>Réservé le</th>
+                        <th>Stock dispo</th>
+                        <th>Statut</th>
+                        <th style="text-align:right;">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                @foreach (var r in Model)
+                {
+                    var nom   = $"{r.IdMembreNavigation?.Prenom} {r.IdMembreNavigation?.Nom}".Trim();
+                    var stock = r.IdLivreNavigation?.QuantiteDisponible ?? 0;
+                    bool dispo = stock > 0;
+
+                    <tr>
+                        <td>
+                            <span style="font-weight:600;">@nom</span>
+                        </td>
+                        <td>
+                            <a asp-controller="Catalogue" asp-action="Details"
+                               asp-route-id="@r.IdLivre"
+                               style="color:var(--blue); text-decoration:none; font-weight:500;">
+                                @r.IdLivreNavigation?.Titre
+                            </a>
+                        </td>
+                        <td>@r.DateReservation?.ToString("dd/MM/yyyy")</td>
+                        <td>
+                            <span style="font-weight:700;
+                                         color:@(dispo ? "#15803d" : "#991b1b");">
+                                @stock ex.
+                            </span>
+                        </td>
+                        <td>
+                            @if (r.Statut == "en_attente")
+                            {
+                                <span class="status-badge badge-amber">En attente</span>
+                            }
+                            else if (r.Statut == "disponible")
+                            {
+                                <span class="status-badge badge-blue">Disponible</span>
+                            }
+                            else if (r.Statut == "honoree")
+                            {
+                                <span class="status-badge badge-green">Honorée</span>
+                            }
+                        </td>
+                        <td style="text-align:right;">
+                            @if (r.Statut != "honoree")
+                            {
+                                @if (dispo && r.Statut == "disponible")
+                                {
+                                    <form asp-action="ConvertirEnEmprunt" method="post"
+                                          style="margin:0; display:inline;">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="id" value="@r.IdReservation" />
+                                        <button type="submit" class="btn btn-primary">
+                                            Convertir en emprunt
+                                        </button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <span style="font-size:0.8rem; color:var(--text-muted);
+                                                 font-style:italic;">
+                                        Stock épuisé
+                                    </span>
+                                }
+                            }
+                        </td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

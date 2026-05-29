@@ -1,0 +1,539 @@
+:root {
+    --abo-surface: rgba(255, 255, 255, 0.86);
+    --abo-surface-strong: #ffffff;
+    --abo-border: rgba(148, 163, 184, 0.18);
+    --abo-text: #0f172a;
+    --abo-muted: #64748b;
+    --abo-primary: #0f766e;
+    --abo-primary-strong: #115e59;
+    --abo-primary-soft: rgba(15, 118, 110, 0.10);
+    --abo-danger: #b94757;
+    --abo-danger-soft: rgba(185, 71, 87, 0.12);
+    --abo-warning: #b7791f;
+    --abo-warning-soft: rgba(183, 121, 31, 0.14);
+    --abo-success: #15803d;
+    --abo-success-soft: rgba(21, 128, 61, 0.12);
+    --abo-shadow: 0 20px 45px rgba(15, 23, 42, 0.08);
+}
+
+.abo-admin-page {
+    display: grid;
+    gap: 22px;
+}
+
+.abo-hero,
+.abo-panel,
+.abo-stat,
+.abo-action-card {
+    backdrop-filter: blur(14px);
+}
+
+.abo-hero {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.8fr);
+    gap: 20px;
+    padding: 28px;
+    border-radius: 28px;
+    background:
+        linear-gradient(135deg, rgba(15, 23, 42, 0.96), rgba(15, 118, 110, 0.88)),
+        linear-gradient(120deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0));
+    color: #f8fafc;
+    box-shadow: 0 24px 60px rgba(15, 23, 42, 0.22);
+    position: relative;
+    overflow: hidden;
+}
+
+.abo-hero::before,
+.abo-hero::after {
+    content: "";
+    position: absolute;
+    border-radius: 999px;
+    opacity: 0.6;
+}
+
+.abo-hero::before {
+    width: 230px;
+    height: 230px;
+    top: -60px;
+    right: -70px;
+    background: rgba(20, 184, 166, 0.16);
+}
+
+.abo-hero::after {
+    width: 180px;
+    height: 180px;
+    bottom: -90px;
+    left: 40%;
+    background: rgba(245, 158, 11, 0.14);
+}
+
+.abo-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    padding: 8px 12px;
+    border-radius: 999px;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    margin-bottom: 14px;
+}
+
+.abo-hero h1 {
+    margin: 0 0 8px;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: 1.02;
+    letter-spacing: -0.03em;
+}
+
+.abo-hero p {
+    margin: 0;
+    max-width: 700px;
+    color: rgba(248, 250, 252, 0.78);
+    line-height: 1.7;
+}
+
+.abo-hero-side {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    align-items: flex-start;
+}
+
+.abo-hero-note,
+.abo-mini-card {
+    width: 100%;
+    padding: 16px 18px;
+    border-radius: 20px;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.abo-hero-note strong,
+.abo-mini-card strong {
+    display: block;
+    color: #ffffff;
+    margin-bottom: 4px;
+}
+
+.abo-hero-note span,
+.abo-mini-card span {
+    color: rgba(248, 250, 252, 0.72);
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.abo-btn,
+.abo-btn-secondary,
+.abo-btn-danger,
+.abo-tab {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease;
+    cursor: pointer;
+}
+
+.abo-btn,
+.abo-btn-secondary,
+.abo-btn-danger {
+    padding: 11px 16px;
+    font-size: 13px;
+}
+
+.abo-btn {
+    background: var(--abo-surface-strong);
+    color: var(--abo-text);
+    box-shadow: 0 12px 24px rgba(15, 23, 42, 0.18);
+}
+
+.abo-btn:hover,
+.abo-btn-secondary:hover,
+.abo-btn-danger:hover,
+.abo-tab:hover {
+    transform: translateY(-2px);
+}
+
+.abo-btn-secondary {
+    background: var(--abo-primary-soft);
+    color: var(--abo-primary-strong);
+    border-color: rgba(15, 118, 110, 0.12);
+}
+
+.abo-btn-danger {
+    background: var(--abo-danger-soft);
+    color: var(--abo-danger);
+    border-color: rgba(220, 38, 38, 0.08);
+}
+
+.abo-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.abo-stat {
+    background: var(--abo-surface);
+    border: 1px solid var(--abo-border);
+    box-shadow: var(--abo-shadow);
+    border-radius: 24px;
+    padding: 22px;
+}
+
+.abo-stat-label {
+    display: block;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    font-weight: 800;
+    color: var(--abo-muted);
+    margin-bottom: 10px;
+}
+
+.abo-stat-value {
+    display: block;
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--abo-text);
+    line-height: 1;
+}
+
+.abo-stat-sub {
+    display: block;
+    margin-top: 8px;
+    color: var(--abo-muted);
+    font-size: 13px;
+}
+
+.abo-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.abo-tabs {
+    display: inline-flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.abo-tab {
+    padding: 10px 14px;
+    font-size: 13px;
+    background: rgba(255, 255, 255, 0.76);
+    color: var(--abo-muted);
+    border-color: var(--abo-border);
+}
+
+.abo-tab.active {
+    background: linear-gradient(135deg, var(--abo-primary), #14b8a6);
+    color: white;
+    box-shadow: 0 16px 30px rgba(15, 118, 110, 0.18);
+}
+
+.abo-badge-count {
+    display: inline-flex;
+    min-width: 24px;
+    height: 24px;
+    padding: 0 7px;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 800;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.abo-tab:not(.active) .abo-badge-count {
+    background: rgba(15, 118, 110, 0.12);
+    color: var(--abo-primary-strong);
+}
+
+.abo-panel {
+    background: var(--abo-surface);
+    border: 1px solid var(--abo-border);
+    box-shadow: var(--abo-shadow);
+    border-radius: 28px;
+    overflow: hidden;
+}
+
+.abo-panel-header {
+    padding: 22px 24px 18px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 18px;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.8);
+}
+
+.abo-panel-header h2 {
+    margin: 0 0 4px;
+    font-size: 20px;
+    color: var(--abo-text);
+}
+
+.abo-panel-header p,
+.abo-result {
+    margin: 0;
+    color: var(--abo-muted);
+    font-size: 14px;
+}
+
+.abo-result {
+    white-space: nowrap;
+}
+
+.abo-empty {
+    padding: 46px 22px;
+    text-align: center;
+    color: var(--abo-muted);
+}
+
+.abo-table-wrap {
+    overflow-x: auto;
+}
+
+.abo-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+.abo-table thead {
+    background: rgba(248, 250, 252, 0.92);
+}
+
+.abo-table th,
+.abo-table td {
+    padding: 16px 18px;
+    text-align: left;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.86);
+    vertical-align: middle;
+}
+
+.abo-table th {
+    font-size: 12px;
+    color: var(--abo-muted);
+    font-weight: 800;
+    letter-spacing: 0.08em;
+}
+
+.abo-table td {
+    color: var(--abo-text);
+    font-size: 14px;
+}
+
+.abo-table th:nth-child(1),
+.abo-table td:nth-child(1) {
+    width: 28%;
+}
+
+.abo-table th:nth-child(2),
+.abo-table td:nth-child(2) {
+    width: 18%;
+}
+
+.abo-table th:nth-child(3),
+.abo-table td:nth-child(3) {
+    width: 20%;
+}
+
+.abo-table th:nth-child(4),
+.abo-table td:nth-child(4) {
+    width: 15%;
+}
+
+.abo-table th:nth-child(5),
+.abo-table td:nth-child(5) {
+    width: 12%;
+}
+
+.abo-table tbody tr:hover {
+    background: rgba(248, 250, 252, 0.72);
+}
+
+.abo-member {
+    display: grid;
+    gap: 4px;
+}
+
+.abo-member strong,
+.abo-plan strong {
+    font-weight: 800;
+}
+
+.abo-member span,
+.abo-plan span,
+.abo-meta {
+    color: var(--abo-muted);
+    font-size: 12px;
+}
+
+.abo-payment {
+    display: grid;
+    gap: 4px;
+}
+
+.abo-plan {
+    display: grid;
+    gap: 4px;
+}
+
+.abo-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.abo-status.pending {
+    background: var(--abo-warning-soft);
+    color: var(--abo-warning);
+}
+
+.abo-status.active {
+    background: var(--abo-success-soft);
+    color: var(--abo-success);
+}
+
+.abo-status.refused {
+    background: var(--abo-danger-soft);
+    color: var(--abo-danger);
+}
+
+.abo-status.inactive {
+    background: rgba(148, 163, 184, 0.16);
+    color: #475569;
+}
+
+.abo-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.abo-form-shell {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.abo-form {
+    padding: 26px;
+}
+
+.abo-form-grid {
+    display: grid;
+    gap: 18px;
+}
+
+.abo-field {
+    display: grid;
+    gap: 8px;
+}
+
+.abo-field label {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--abo-text);
+}
+
+.abo-field input {
+    width: 100%;
+    padding: 14px 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(203, 213, 225, 0.95);
+    background: white;
+    color: var(--abo-text);
+    font-size: 14px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.abo-field input:focus {
+    outline: none;
+    border-color: rgba(15, 118, 110, 0.36);
+    box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+}
+
+.abo-form-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+}
+
+.field-validation-error {
+    color: var(--abo-danger);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.abo-actions-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.abo-action-card {
+    background: var(--abo-surface);
+    border: 1px solid var(--abo-border);
+    box-shadow: var(--abo-shadow);
+    border-radius: 24px;
+    padding: 22px;
+}
+
+.abo-action-card h3 {
+    margin: 0 0 6px;
+    font-size: 16px;
+    color: var(--abo-text);
+}
+
+.abo-action-card p {
+    margin: 0;
+    color: var(--abo-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.abo-action-card .abo-btn-secondary {
+    margin-top: 16px;
+}
+
+@media (max-width: 1100px) {
+    .abo-hero,
+    .abo-stats,
+    .abo-actions-grid,
+    .dashboard-grid-top,
+    .dashboard-grid-bottom {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .abo-hero,
+    .abo-panel-header,
+    .abo-toolbar {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .abo-actions {
+        justify-content: flex-start;
+    }
+
+    .abo-form {
+        padding: 20px;
+    }
+}

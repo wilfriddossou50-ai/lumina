@@ -1,4 +1,26 @@
-﻿// Please see documentation at https://learn.microsoft.com/aspnet/core/client-side/bundling-and-minification
-// for details on configuring this project to bundle and minify static web assets.
+window.addEventListener("load", () => {
+    document.body.classList.add("app-loaded");
+});
 
-// Write your JavaScript code.
+// Apply automatic lazy loading only to images that explicitly opt in.
+const autoLazyImages = document.querySelectorAll("img[data-auto-lazy]:not([loading])");
+autoLazyImages.forEach((img) => {
+    img.setAttribute("loading", "lazy");
+    img.setAttribute("decoding", "async");
+});
+
+const sidebarToggle = document.getElementById("sidebarToggle");
+const sidebar = document.querySelector(".sidebar");
+const overlay = document.getElementById("sidebarOverlay");
+
+if (sidebarToggle && sidebar && overlay) {
+    sidebarToggle.addEventListener("click", () => {
+        sidebar.classList.toggle("mobile-open");
+        overlay.classList.toggle("active");
+    });
+
+    overlay.addEventListener("click", () => {
+        sidebar.classList.remove("mobile-open");
+        overlay.classList.remove("active");
+    });
+}

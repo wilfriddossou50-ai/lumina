@@ -1,0 +1,196 @@
+@model GestionBibliotheque.Models.Membre
+
+@{
+    ViewData["Title"] = "Details du membre";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var nomComplet = $"{Model.Prenom} {Model.Nom}".Trim();
+    var initiales = string.Join("", nomComplet
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .Take(2)
+        .Select(x => x.Substring(0, 1).ToUpperInvariant()));
+    if (string.IsNullOrWhiteSpace(initiales))
+    {
+        initiales = "M";
+    }
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-membre.css" asp-append-version="true" />
+}
+
+<div class="member-admin-page">
+    <section class="member-hero">
+        <div>
+            <span class="member-eyebrow">Fiche membre</span>
+            <h1>Vue detaillee du profil</h1>
+            <p>
+                Consulte les informations principales, les abonnements, les emprunts
+                et les reservations de <strong>@nomComplet</strong> depuis une seule page.
+            </p>
+        </div>
+
+        <div class="member-hero-side">
+            <a asp-action="Edit" asp-route-id="@Model.IdMembre" class="member-btn">Modifier ce membre</a>
+            <div class="member-highlight-card">
+                <strong>@Model.Emprunts?.Count emprunt(s)</strong>
+                <span>Historique direct du profil avec les donnees utiles de suivi.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="member-content-grid">
+        <article class="member-profile-card">
+            <div class="member-profile-top">
+                <div class="member-avatar">@initiales</div>
+                <div>
+                    <h2>@nomComplet</h2>
+                    <p>Membre #@Model.IdMembre</p>
+                </div>
+            </div>
+
+            <div class="member-profile-grid">
+                <div class="member-info-card">
+                    <span>Statut</span>
+                    <strong><span class="member-status @(string.Equals(Model.Statut, "actif", StringComparison.OrdinalIgnoreCase) ? "active" : "inactive")">@Model.Statut</span></strong>
+                </div>
+                <div class="member-info-card">
+                    <span>Date d'inscription</span>
+                    <strong>@Model.DateInscription?.ToString("dd/MM/yyyy")</strong>
+                </div>
+                <div class="member-info-card">
+                    <span>Sexe</span>
+                    <strong>@(string.IsNullOrWhiteSpace(Model.Sexe) ? "-" : Model.Sexe)</strong>
+                </div>
+                <div class="member-info-card">
+                    <span>Telephone</span>
+                    <strong>@(string.IsNullOrWhiteSpace(Model.Telephone) ? "-" : Model.Telephone)</strong>
+                </div>
+                <div class="member-info-card wide">
+                    <span>Email</span>
+                    <p>@(string.IsNullOrWhiteSpace(Model.Mail) ? "-" : Model.Mail)</p>
+                </div>
+                <div class="member-info-card wide">
+                    <span>Adresse</span>
+                    <p>@(string.IsNullOrWhiteSpace(Model.Adresse) ? "Non renseignee" : Model.Adresse)</p>
+                </div>
+            </div>
+
+            <div class="member-form-actions" style="margin-top:20px;">
+                <a asp-action="Edit" asp-route-id="@Model.IdMembre" class="member-btn-secondary">Modifier</a>
+                <a asp-action="Delete" asp-route-id="@Model.IdMembre" class="member-btn-danger">Supprimer</a>
+                <a asp-action="Index" class="member-btn-ghost">Retour a la liste</a>
+            </div>
+        </article>
+
+        <section class="member-section-stack">
+            @if (Model.Abonnements != null && Model.Abonnements.Any())
+            {
+                <article class="member-card">
+                    <div class="member-card-header">
+                        <div>
+                            <h3>Abonnements</h3>
+                            <p>Plans souscrits et historique d'activation.</p>
+                        </div>
+                    </div>
+                    <div class="member-table-wrap">
+                        <table class="member-mini-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Debut</th>
+                                    <th>Fin</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var abonnement in Model.Abonnements.OrderByDescending(a => a.DateDebut))
+                                {
+                                    <tr>
+                                        <td>@abonnement.IdTypeNavigation?.Libelle</td>
+                                        <td>@abonnement.DateDebut?.ToString("dd/MM/yyyy")</td>
+                                        <td>@abonnement.DateFin?.ToString("dd/MM/yyyy")</td>
+                                        <td><span class="member-status info">@abonnement.Statut</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            }
+
+            @if (Model.Emprunts != null && Model.Emprunts.Any())
+            {
+                <article class="member-card">
+                    <div class="member-card-header">
+                        <div>
+                            <h3>Emprunts</h3>
+                            <p>@Model.Emprunts.Count emprunt(s) recense(s) sur le profil.</p>
+                        </div>
+                    </div>
+                    <div class="member-table-wrap">
+                        <table class="member-mini-table">
+                            <thead>
+                                <tr>
+                                    <th>Livres</th>
+                                    <th>Date emprunt</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var emprunt in Model.Emprunts.OrderByDescending(e => e.DateEmprunt))
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="member-book-list">
+                                                @foreach (var detail in emprunt.DetailEmprunts)
+                                                {
+                                                    <span>@detail.IdLivreNavigation?.Titre</span>
+                                                }
+                                            </div>
+                                        </td>
+                                        <td>@emprunt.DateEmprunt?.ToString("dd/MM/yyyy")</td>
+                                        <td><span class="member-status info">@emprunt.Statut</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            }
+
+            @if (Model.Reservations != null && Model.Reservations.Any())
+            {
+                <article class="member-card">
+                    <div class="member-card-header">
+                        <div>
+                            <h3>Reservations</h3>
+                            <p>@Model.Reservations.Count reservation(s) associee(s) a ce membre.</p>
+                        </div>
+                    </div>
+                    <div class="member-table-wrap">
+                        <table class="member-mini-table">
+                            <thead>
+                                <tr>
+                                    <th>Livre</th>
+                                    <th>Date reservation</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var reservation in Model.Reservations.OrderByDescending(r => r.DateReservation))
+                                {
+                                    <tr>
+                                        <td>@reservation.IdLivreNavigation?.Titre</td>
+                                        <td>@reservation.DateReservation?.ToString("dd/MM/yyyy")</td>
+                                        <td><span class="member-status info">@reservation.Statut</span></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </article>
+            }
+        </section>
+    </section>
+</div>

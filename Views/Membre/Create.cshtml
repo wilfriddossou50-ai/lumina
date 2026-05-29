@@ -1,0 +1,167 @@
+@model GestionBibliotheque.ViewModels.MembreAdminViewModel
+
+@{
+    ViewData["Title"] = "Creer un membre";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-membre.css" asp-append-version="true" />
+}
+
+<div class="member-admin-page member-form-shell">
+    <section class="member-hero">
+        <div>
+            <span class="member-eyebrow">Nouveau membre</span>
+            <h1>Creer une fiche membre</h1>
+            <p>
+                Ajoute un nouvel adherent avec une fiche complete, ses informations
+                personnelles et ses identifiants de connexion.
+            </p>
+        </div>
+
+        <div class="member-hero-side">
+            <a asp-action="Index" class="member-btn">Retour aux membres</a>
+            <div class="member-highlight-card">
+                <strong>Creation admin</strong>
+                <span>La fiche creee sera directement disponible dans l'espace d'administration.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="member-form-panel">
+        <div class="member-panel-header">
+            <div>
+                <h2>Informations du membre</h2>
+                <p>Renseigne les champs essentiels avant de valider la creation.</p>
+            </div>
+        </div>
+
+        <form asp-action="Create" method="post" class="member-form-body">
+            @Html.AntiForgeryToken()
+            <input asp-for="IdMembre" type="hidden" />
+            <input asp-for="IdUtilisateur" type="hidden" />
+
+            <div class="member-form-grid">
+                <div class="member-field">
+                    <label asp-for="Prenom">Prenom</label>
+                    <input asp-for="Prenom" class="member-input" placeholder="Jean" />
+                    <span asp-validation-for="Prenom"></span>
+                </div>
+
+                <div class="member-field">
+                    <label asp-for="Nom">Nom</label>
+                    <input asp-for="Nom" class="member-input" placeholder="Dupont" />
+                    <span asp-validation-for="Nom"></span>
+                </div>
+
+                <div class="member-field full">
+                    <span class="member-field-title">Sexe</span>
+                    <div class="member-radio-group">
+                        <label class="member-radio">
+                            <input type="radio" asp-for="Sexe" value="Homme" />
+                            <span>Homme</span>
+                        </label>
+                        <label class="member-radio">
+                            <input type="radio" asp-for="Sexe" value="Femme" />
+                            <span>Femme</span>
+                        </label>
+                        <label class="member-radio">
+                            <input type="radio" asp-for="Sexe" value="Autre" />
+                            <span>Autre</span>
+                        </label>
+                    </div>
+                    <span asp-validation-for="Sexe"></span>
+                </div>
+
+                <div class="member-field">
+                    <label asp-for="Telephone">Telephone</label>
+                    <input asp-for="Telephone" class="member-input" placeholder="01 23 45 67 89" />
+                    <span asp-validation-for="Telephone"></span>
+                </div>
+
+                <div class="member-field">
+                    <label asp-for="Mail">Email</label>
+                    <input asp-for="Mail" class="member-input" placeholder="jean.dupont@exemple.com" />
+                    <span asp-validation-for="Mail"></span>
+                </div>
+
+                <div class="member-field full">
+                    <label asp-for="Adresse">Adresse complete</label>
+                    <input asp-for="Adresse" class="member-input" placeholder="123 Avenue de la Bibliotheque" />
+                    <span asp-validation-for="Adresse"></span>
+                </div>
+
+                <div class="member-field">
+                    <label asp-for="Login">Identifiant</label>
+                    <input asp-for="Login" class="member-input" placeholder="jdupont88" autocomplete="username" />
+                    <span asp-validation-for="Login"></span>
+                </div>
+
+                <div class="member-field">
+                    <label asp-for="Password">Mot de passe</label>
+                    <input asp-for="Password" id="passwordInput" type="password" class="member-input" placeholder="Minimum 6 caracteres" autocomplete="new-password" />
+                    <div class="member-password-strength">
+                        <div class="member-strength-bar">
+                            <div class="member-strength-fill" id="strengthFill"></div>
+                        </div>
+                        <span class="member-strength-label" id="strengthLabel"></span>
+                    </div>
+                    <span asp-validation-for="Password"></span>
+                </div>
+
+                <div class="member-field full">
+                    <label class="member-checkbox">
+                        <input asp-for="AccepterConditions" type="checkbox" />
+                        <span>J'accepte les conditions generales et la politique de confidentialite pour creer ce compte membre.</span>
+                    </label>
+                    <span asp-validation-for="AccepterConditions"></span>
+                </div>
+            </div>
+
+            <div class="member-form-actions">
+                <a asp-action="Index" class="member-btn-ghost">Annuler</a>
+                <button type="submit" class="member-btn-secondary">Creer le membre</button>
+            </div>
+        </form>
+    </section>
+</div>
+
+@section Scripts {
+    @{ await Html.RenderPartialAsync("_ValidationScriptsPartial"); }
+    <script>
+        document.getElementById('passwordInput')?.addEventListener('input', function () {
+            const val = this.value;
+            const fill = document.getElementById('strengthFill');
+            const label = document.getElementById('strengthLabel');
+            if (!fill || !label) return;
+
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const levels = [
+                { pct: '20%', color: '#ef4444', text: 'Tres faible' },
+                { pct: '40%', color: '#f97316', text: 'Faible' },
+                { pct: '60%', color: '#eab308', text: 'Moyen' },
+                { pct: '80%', color: '#3b82f6', text: 'Robuste' },
+                { pct: '100%', color: '#22c55e', text: 'Excellent' }
+            ];
+
+            if (val.length === 0) {
+                fill.style.width = '0';
+                label.textContent = '';
+                return;
+            }
+
+            const lvl = levels[Math.min(score, 4)];
+            fill.style.width = lvl.pct;
+            fill.style.background = lvl.color;
+            label.textContent = 'Force du mot de passe : ' + lvl.text;
+            label.style.color = lvl.color;
+        });
+    </script>
+}

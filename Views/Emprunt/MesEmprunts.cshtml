@@ -1,0 +1,55 @@
+@model List<GestionBibliotheque.Models.Emprunt>
+@{
+    ViewData["Title"] = "Mes emprunts";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+<div class="dash-hero">
+    <div class="dash-welcome">
+        <h1>Mes emprunts</h1>
+        <p>Liste des emprunts en cours et des livres à rendre.</p>
+    </div>
+</div>
+
+<div class="dash-card">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state">
+            <p>Vous n'avez aucun emprunt en cours.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-container">
+            <table class="act-table">
+                <thead>
+                    <tr>
+                        <th>Livres</th>
+                        <th>Date d'emprunt</th>
+                        <th>Date de retour prévue</th>
+                        <th>Statut</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emprunt in Model)
+                    {
+                        <tr>
+                            <td>
+                                @foreach (var detail in emprunt.DetailEmprunts)
+                                {
+                                    <div>@detail.IdLivreNavigation?.Titre</div>
+                                }
+                            </td>
+                            <td>@emprunt.DateEmprunt?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @string.Join(", ", emprunt.DetailEmprunts
+                                    .Select(d => d.DateRetourPrevu?.ToString("dd/MM/yyyy") ?? "-").Distinct())
+                            </td>
+                            <td><span class="status-badge badge-blue">@emprunt.Statut</span></td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

@@ -1,0 +1,186 @@
+@using GestionBibliotheque.Services
+@inject ICurrentUserService CurrentUser
+
+@{
+    var title = ViewData["Title"] ?? "Admin";
+    var activePage = ViewData["ActivePage"]?.ToString() ?? "";
+    int nbNotifs = ViewBag.NotificationCount as int? ?? ViewBag.NbNotifsAdmin as int? ?? 0;
+    string adminNom = ViewBag.MembreNom as string ?? CurrentUser.DisplayName;
+    string initiales = adminNom.Split(' ') is var p && p.Length >= 2
+        ? $"{p[0][0]}{p[1][0]}".ToUpper()
+        : adminNom.Length > 0 ? adminNom[0].ToString().ToUpper() : "A";
+}
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@title - Lumina Admin</title>
+    <link rel="stylesheet" href="~/css/admin-layout.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
+    @RenderSection("Styles", required: false)
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebarOverlay" aria-hidden="true"></div>
+<aside class="sidebar" id="sidebar" aria-label="Menu administrateur">
+
+    <div class="sidebar-brand">
+        <div class="brand-icon">
+            <span data-lucide="book-open"></span>
+        </div>
+        <div>
+            <div class="brand-name">Lumina</div>
+            <div class="brand-sub">ADMIN PORTAIL</div>
+        </div>
+    </div>
+
+    <nav class="sidebar-nav">
+        <a asp-controller="AdminDashboard" asp-action="Index"
+           class="nav-item @(activePage == "Dashboard" ? "active" : "")">
+            <span data-lucide="layout-grid"></span>
+            <span>Dashboard</span>
+        </a>
+
+        <a asp-controller="Catalogue" asp-action="Index"
+           class="nav-item @(activePage == "Catalogue" ? "active" : "")">
+            <span data-lucide="book-open"></span>
+            <span>Catalogue</span>
+        </a>
+
+        <a asp-controller="Membre" asp-action="Index"
+           class="nav-item @(activePage == "Membres" ? "active" : "")">
+            <span data-lucide="users"></span>
+            <span>Membres</span>
+        </a>
+
+        <a asp-controller="Emprunt" asp-action="Index"
+           class="nav-item @(activePage == "Emprunts" ? "active" : "")">
+            <span data-lucide="book-open-check"></span>
+            <span>Emprunts</span>
+        </a>
+
+        <a asp-controller="Reservation" asp-action="Index"
+           class="nav-item @(activePage == "Reservations" ? "active" : "")">
+            <span data-lucide="calendar-days"></span>
+            <span>Reservations</span>
+        </a>
+
+        <a asp-controller="Alerte" asp-action="Index"
+           class="nav-item @(activePage == "Alertes" ? "active" : "")">
+            <span data-lucide="bell"></span>
+            <span>Alertes</span>
+        </a>
+
+        <a asp-controller="Notification" asp-action="Index"
+           class="nav-item @(activePage == "Notifications" ? "active" : "")">
+            <span data-lucide="mail"></span>
+            <span>Notifications</span>
+            @if (nbNotifs > 0)
+            {
+                <span class="nav-badge">@(nbNotifs > 99 ? "99+" : nbNotifs.ToString())</span>
+            }
+        </a>
+
+        <a asp-controller="Abonnement" asp-action="Index"
+           class="nav-item @(activePage == "Abonnements" ? "active" : "")">
+            <span data-lucide="badge-dollar-sign"></span>
+            <span>Abonnements</span>
+        </a>
+    </nav>
+
+    <div class="sidebar-bottom">
+        <a asp-controller="Profil" asp-action="Index"
+           class="nav-item @(activePage == "Profil" ? "active" : "")">
+            <span data-lucide="user-round"></span>
+            <span>Profil</span>
+        </a>
+        <form asp-controller="Auth" asp-action="Logout" method="post" style="margin:0">
+            @Html.AntiForgeryToken()
+            <button type="submit" class="nav-item nav-logout">
+                <span data-lucide="log-out"></span>
+                <span>Deconnexion</span>
+            </button>
+        </form>
+    </div>
+</aside>
+
+<div class="main-wrapper">
+    <header class="topbar">
+        <button type="button" class="topbar-menu-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
+            <span data-lucide="menu"></span>
+        </button>
+        <div class="topbar-search">
+            <span data-lucide="search"></span>
+            <input type="text" placeholder="Rechercher un livre, membre, emprunt..." id="searchInput" />
+            <span class="search-kbd">Entrer</span>
+        </div>
+
+        <div class="topbar-right">
+            <a asp-controller="Notification" asp-action="Index" class="topbar-icon-btn" title="Notifications">
+                <span data-lucide="bell"></span>
+                @if (nbNotifs > 0)
+                {
+                    <span class="notif-dot"></span>
+                }
+            </a>
+
+            <div class="topbar-user">
+                <div class="user-info">
+                    <span class="user-name">@adminNom</span>
+                    <span class="user-role">ADMINISTRATEUR</span>
+                </div>
+                <div class="user-avatar">@initiales</div>
+            </div>
+        </div>
+    </header>
+
+    <main class="page-content">
+        @await Html.PartialAsync("_Alerts")
+        @RenderBody()
+    </main>
+</div>
+
+<script src="~/lib/lucide/lucide.min.js" asp-append-version="true"></script>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script>
+    window.lucide?.createIcons();
+
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('sidebarOverlay');
+    const toggleBtn = document.getElementById('sidebarToggle');
+
+    function closeSidebar() {
+        sidebar?.classList.remove('open');
+        overlay?.classList.remove('show');
+        toggleBtn?.setAttribute('aria-expanded', 'false');
+        overlay?.setAttribute('aria-hidden', 'true');
+    }
+
+    function openSidebar() {
+        sidebar?.classList.add('open');
+        overlay?.classList.add('show');
+        toggleBtn?.setAttribute('aria-expanded', 'true');
+        overlay?.setAttribute('aria-hidden', 'false');
+    }
+
+    toggleBtn?.addEventListener('click', () => {
+        const isOpen = sidebar?.classList.contains('open');
+        isOpen ? closeSidebar() : openSidebar();
+    });
+
+    overlay?.addEventListener('click', closeSidebar);
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') closeSidebar();
+    });
+
+    document.getElementById('searchInput')?.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' && this.value.trim()) {
+            window.location.href = '/Catalogue?searchTerm=' + encodeURIComponent(this.value.trim());
+        }
+    });
+</script>
+@RenderSection("Scripts", required: false)
+</body>
+</html>

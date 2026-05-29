@@ -3,15 +3,15 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Lumina Library</title>
-    <link rel="stylesheet" href="~/css/home.css" />
+    <title>@ViewData["Title"] - Lumina Bibliotheque</title>
+    <link rel="stylesheet" href="~/css/home.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
 </head>
 <body>
 
     <nav class="navbar">
         <div class="nav-container">
-            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Lumina Library</a>
+            <a class="navbar-brand" asp-controller="Home" asp-action="Index">Lumina Bibliotheque</a>
             <ul class="nav-links">
                 <li><a asp-controller="Home" asp-action="Index" class="nav-link active">Accueil</a></li>
             </ul>
@@ -23,13 +23,14 @@
     </nav>
 
     <main>
+        @await Html.PartialAsync("_Alerts")
         @RenderBody()
     </main>
 
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-brand">
-                <h3>Lumina Library</h3>
+                <h3>Lumina Bibliotheque</h3>
                 <p>L'alliance de l'autorité traditionnelle et de l'utilité numérique moderne.</p>
             </div>
             <div class="footer-links">
@@ -41,11 +42,12 @@
             </div>
         </div>
         <div class="footer-bottom">
-            <p>© 2026 LUMINA LIBRARY. TOUS DROITS RÉSERVÉS.</p>
+            <p>© 2026 LUMINA BIBLIOTHEQUE. TOUS DROITS RÉSERVÉS.</p>
         </div>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
     @RenderSection("Scripts", required: false)
 </body>
 </html>

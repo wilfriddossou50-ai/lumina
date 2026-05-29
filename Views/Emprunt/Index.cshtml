@@ -1,0 +1,62 @@
+@model List<GestionBibliotheque.Models.Emprunt>
+@{
+    ViewData["Title"] = "Emprunts en cours";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+}
+
+<div class="dash-hero">
+    <div class="dash-welcome">
+        <h1>Emprunts en cours</h1>
+        <p>Validez les retours et suivez les emprunts des membres.</p>
+    </div>
+</div>
+
+<div class="dash-card">
+    @if (Model == null || !Model.Any())
+    {
+        <div class="empty-state">
+            <p>Aucun emprunt en cours.</p>
+        </div>
+    }
+    else
+    {
+        <div class="table-container">
+            <table class="act-table">
+                <thead>
+                    <tr>
+                        <th>Membre</th>
+                        <th>Livres</th>
+                        <th>Date emprunt</th>
+                        <th>Retour prévu</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var emprunt in Model)
+                    {
+                        <tr>
+                            <td>@(emprunt.IdMembreNavigation != null ? $"{emprunt.IdMembreNavigation.Nom} {emprunt.IdMembreNavigation.Prenom}" : "-")</td>
+                            <td>
+                                @foreach (var detail in emprunt.DetailEmprunts)
+                                {
+                                    <div>@detail.IdLivreNavigation?.Titre</div>
+                                }
+                            </td>
+                            <td>@emprunt.DateEmprunt?.ToString("dd/MM/yyyy")</td>
+                            <td>
+                                @string.Join(", ", emprunt.DetailEmprunts
+                                    .Select(d => d.DateRetourPrevu?.ToString("dd/MM/yyyy") ?? "-").Distinct())
+                            </td>
+                            <td>
+                                <form asp-action="ValiderRetour" method="post" onsubmit="return confirm('Confirmer le retour de cet emprunt ?');">
+                                    <input type="hidden" name="id" value="@emprunt.IdEmprunt" />
+                                    <button type="submit" class="btn btn-success">Valider retour</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>

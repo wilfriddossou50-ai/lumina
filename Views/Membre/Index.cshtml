@@ -1,0 +1,136 @@
+@model IEnumerable<GestionBibliotheque.Models.Membre>
+
+@{
+    ViewData["Title"] = "Gestion des membres";
+    Layout = "~/Views/Shared/_AdminLayout.cshtml";
+
+    var membres = Model?.ToList() ?? new List<GestionBibliotheque.Models.Membre>();
+    int totalMembres = membres.Count;
+    int membresActifs = membres.Count(m => string.Equals(m.Statut, "actif", StringComparison.OrdinalIgnoreCase));
+    int membresInactifs = totalMembres - membresActifs;
+    int nouveauxCeMois = membres.Count(m => m.DateInscription.HasValue
+        && m.DateInscription.Value.Month == DateTime.Today.Month
+        && m.DateInscription.Value.Year == DateTime.Today.Year);
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/admin-membre.css" asp-append-version="true" />
+}
+
+<div class="member-admin-page">
+    <section class="member-hero">
+        <div>
+            <span class="member-eyebrow">Administration des membres</span>
+            <h1>Base adherents et suivi des profils</h1>
+            <p>
+                Garde une vue claire sur les membres, leur statut et leurs informations
+                pour administrer la bibliotheque avec un niveau de presentation plus pro.
+            </p>
+        </div>
+
+        <div class="member-hero-side">
+            <a asp-action="Create" class="member-btn">Nouveau membre</a>
+            <div class="member-highlight-card">
+                <strong>@nouveauxCeMois nouvelle(s) inscription(s)</strong>
+                <span>Ajoute ou mets a jour les profils depuis un espace unifie.</span>
+            </div>
+            <div class="member-chip-card">
+                <strong>@membresActifs membre(s) actif(s)</strong>
+                <span>La liste ci-dessous centralise l'ensemble des fiches administrables.</span>
+            </div>
+        </div>
+    </section>
+
+    <section class="member-stats">
+        <article class="member-stat">
+            <span class="member-stat-label">TOTAL MEMBRES</span>
+            <span class="member-stat-value">@totalMembres</span>
+            <span class="member-stat-sub">Profils actuellement enregistres</span>
+        </article>
+
+        <article class="member-stat">
+            <span class="member-stat-label">ACTIFS</span>
+            <span class="member-stat-value">@membresActifs</span>
+            <span class="member-stat-sub">Membres disponibles dans le systeme</span>
+        </article>
+
+        <article class="member-stat">
+            <span class="member-stat-label">INACTIFS</span>
+            <span class="member-stat-value">@membresInactifs</span>
+            <span class="member-stat-sub">Profils a surveiller ou reactiver</span>
+        </article>
+
+        <article class="member-stat">
+            <span class="member-stat-label">CE MOIS</span>
+            <span class="member-stat-value">@nouveauxCeMois</span>
+            <span class="member-stat-sub">Inscriptions recensees sur la periode</span>
+        </article>
+    </section>
+
+    <section class="member-panel">
+        <div class="member-panel-header">
+            <div>
+                <h2>Liste des membres</h2>
+                <p>Consulte, modifie ou supprime une fiche depuis cette vue unique.</p>
+            </div>
+            <p class="member-result">@totalMembres membre@(totalMembres > 1 ? "s" : "")</p>
+        </div>
+
+        @if (!membres.Any())
+        {
+            <div class="member-empty">
+                Aucun membre trouve. Commence par creer un premier profil.
+            </div>
+        }
+        else
+        {
+            <div class="member-table-wrap">
+                <table class="member-table">
+                    <thead>
+                        <tr>
+                            <th>Membre</th>
+                            <th>Contact</th>
+                            <th>Statut</th>
+                            <th>Inscription</th>
+                            <th style="text-align:right;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var membre in membres)
+                        {
+                            var nomComplet = $"{membre.Prenom} {membre.Nom}".Trim();
+                            var statutCss = string.Equals(membre.Statut, "actif", StringComparison.OrdinalIgnoreCase) ? "active" : "inactive";
+                            var initialeNom = string.IsNullOrWhiteSpace(nomComplet) ? "M" : nomComplet.Substring(0, 1).ToUpperInvariant();
+
+                            <tr>
+                                <td>
+                                    <div class="member-name-block">
+                                        <strong>@nomComplet</strong>
+                                        <span>Reference membre #@membre.IdMembre</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="member-name-block">
+                                        <strong>@(string.IsNullOrWhiteSpace(membre.Mail) ? "-" : membre.Mail)</strong>
+                                        <span>@(string.IsNullOrWhiteSpace(membre.Telephone) ? "Telephone non renseigne" : membre.Telephone)</span>
+                                    </div>
+                                </td>
+                                <td>
+                                    <span class="member-status @statutCss">@membre.Statut</span>
+                                </td>
+                                <td>@membre.DateInscription?.ToString("dd/MM/yyyy")</td>
+                                <td>
+                                    <div class="member-actions">
+                                        <a asp-action="Details" asp-route-id="@membre.IdMembre" class="member-btn-ghost">Details</a>
+                                        <a asp-action="Edit" asp-route-id="@membre.IdMembre" class="member-btn-secondary">Modifier</a>
+                                        <a asp-action="Delete" asp-route-id="@membre.IdMembre" class="member-btn-danger">Supprimer</a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</div>

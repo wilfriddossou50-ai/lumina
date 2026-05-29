@@ -3,128 +3,301 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<!-- HERO SECTION -->
-<section class="hero">
+@section Styles {
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+}
+
+@* ════════════════════════════════════════
+     HERO
+════════════════════════════════════════ *@
+<section class="hero home-hero">
     <div class="hero-container">
+
+        @* Texte gauche *@
         <div class="hero-content">
-            <span class="hero-badge">REDÉFINIR LE SAVOIR</span>
-            <h1>Modernisez votre expérience de lecture</h1>
-            <p class="hero-desc">
-                La Bibliothèque Lumina marie l'essence intemporelle des archives classiques
-                à la précision des outils numériques modernes. Accédez à des collections
-                prestigieuses et gérez votre parcours intellectuel depuis n'importe quel support.
+            <span class="hero-badge anim-fade-up">Expérience de lecture moderne</span>
+
+            <h1 class="anim-fade-up anim-delay-1">
+                Une bibliothèque <em>plus élégante,</em><br>
+                plus claire, plus efficace
+            </h1>
+
+            <p class="hero-desc anim-fade-up anim-delay-2">
+                Lumina combine l'exigence d'une bibliothèque de référence avec la fluidité
+                d'un service numérique moderne. Explorez, réservez et pilotez votre parcours
+                de lecture depuis une interface simple, crédible et responsive.
             </p>
+
+            <div class="hero-actions anim-fade-up anim-delay-3">
+                <a asp-controller="Auth" asp-action="Inscription" class="home-btn home-btn-primary">
+                    Créer un compte
+                    <svg class="home-btn-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+                    </svg>
+                </a>
+                <a asp-controller="Auth" asp-action="Login" class="home-btn home-btn-secondary">
+                    Se connecter
+                </a>
+            </div>
+
+            <div class="hero-signals anim-fade-up anim-delay-4">
+                <div class="hero-signal">
+                    <strong>Catalogue maîtrisé</strong>
+                    <span>Recherche rapide, réservations, alertes et suivi clair.</span>
+                </div>
+                <div class="hero-signal">
+                    <strong>Accès multi-support</strong>
+                    <span>Une expérience propre sur mobile, tablette et bureau.</span>
+                </div>
+            </div>
         </div>
+
+        @* Image droite *@
         <div class="hero-image">
-            <img src="~/images/biblio.jpg" alt="Bibliothèque Lumina" class="hero-biblio-img" />
+            <div class="hero-image-wrapper">
+                <div class="img-skeleton" id="hero-skeleton"></div>
+                <img
+                    src="~/images/biblio.jpg"
+                    alt="Bibliothèque Lumina"
+                    class="hero-biblio-img"
+                    width="760"
+                    height="570"
+                    loading="eager"
+                    fetchpriority="high"
+                    decoding="async"
+                    onload="this.classList.add('img-loaded'); document.getElementById('hero-skeleton').style.display='none';" />
+            </div>
         </div>
+
     </div>
 </section>
 
-<!-- STATS SECTION -->
+@* ════════════════════════════════════════
+     STATS
+════════════════════════════════════════ *@
 <section class="stats">
     <div class="stats-container">
-        <div class="stat-item">
+        <div class="stat-item reveal">
             <span class="stat-number">450k+</span>
-            <span class="stat-label">OUVRAGES SÉLECTIONNÉS</span>
+            <span class="stat-label">Ouvrages sélectionnés</span>
         </div>
-        <div class="stat-item">
+        <div class="stat-item reveal reveal-d1">
             <span class="stat-number">12k+</span>
-            <span class="stat-label">MEMBRES ACTIFS</span>
+            <span class="stat-label">Membres actifs</span>
         </div>
-        <div class="stat-item">
+        <div class="stat-item reveal reveal-d2">
             <span class="stat-number">1.5k+</span>
-            <span class="stat-label">PRÊTS QUOTIDIENS</span>
+            <span class="stat-label">Prêts quotidiens</span>
         </div>
     </div>
 </section>
 
-<!-- BOOKS SECTION -->
+@* ════════════════════════════════════════
+     LIVRES EN VITRINE
+════════════════════════════════════════ *@
 <section class="books-section">
     <div class="section-container">
-        <h2>Sélection Exclusive</h2>
-        <p class="section-subtitle">Nos conservateurs sélectionnent avec soin les œuvres les plus influentes en sciences, philosophie et littérature contemporaine.</p>
+
+        <div class="section-heading reveal">
+            <div>
+                <span class="section-kicker">Sélection</span>
+                <h2>Une vitrine professionnelle du fonds</h2>
+            </div>
+            <p class="section-subtitle">
+                Des ouvrages mis en avant avec une lecture éditoriale, nette
+                et mieux adaptée à tous les écrans.
+            </p>
+        </div>
 
         <div class="books-grid">
-            <div class="book-card">
-                <img class="book-cover-img" src="~/images/livres/philosophie.jpg" alt="L'Architecture de la Logique" />
+
+            <div class="book-card reveal">
+                <div style="position:relative;">
+                    <img class="book-cover-img"
+                         src="~/images/livres/philosophie.jpg"
+                         alt="L'Architecture de la Logique"
+                         width="320" height="200"
+                         loading="lazy"
+                         decoding="async"
+                         onload="this.classList.add('img-loaded')" />
+                    <div class="book-overlay"></div>
+                </div>
                 <div class="book-info">
-                    <span class="book-category">PHILOSOPHIE</span>
+                    <span class="book-category">Philosophie</span>
                     <h3>L'Architecture de la Logique</h3>
-                    <p>Une exploration profonde des structures qui définissent notre raisonnement.</p>
+                    <p>Une exploration profonde des structures qui donnent forme à notre raisonnement.</p>
                 </div>
             </div>
-            <div class="book-card">
-                <img class="book-cover-img" src="~/images/livres/histoire.jpg" alt="Échos de Byzance" />
+
+            <div class="book-card reveal reveal-d1">
+                <div style="position:relative;">
+                    <img class="book-cover-img"
+                         src="~/images/livres/histoire.jpg"
+                         alt="Échos de Byzance"
+                         width="320" height="200"
+                         loading="lazy"
+                         decoding="async"
+                         onload="this.classList.add('img-loaded')" />
+                    <div class="book-overlay"></div>
+                </div>
                 <div class="book-info">
-                    <span class="book-category">HISTOIRE</span>
+                    <span class="book-category">Histoire</span>
                     <h3>Échos de Byzance</h3>
-                    <p>Retracer l'héritage culturel de la Méditerranée à travers des textes oubliés.</p>
+                    <p>Un regard sur les transmissions culturelles majeures du bassin méditerranéen.</p>
                 </div>
             </div>
-            <div class="book-card">
-                <img class="book-cover-img" src="~/images/livres/sciences.jpg" alt="Paysages Quantiques" />
+
+            <div class="book-card reveal reveal-d2">
+                <div style="position:relative;">
+                    <img class="book-cover-img"
+                         src="~/images/livres/sciences.jpg"
+                         alt="Paysages Quantiques"
+                         width="320" height="200"
+                         loading="lazy"
+                         decoding="async"
+                         onload="this.classList.add('img-loaded')" />
+                    <div class="book-overlay"></div>
+                </div>
                 <div class="book-info">
-                    <span class="book-category">SCIENCES</span>
+                    <span class="book-category">Sciences</span>
                     <h3>Paysages Quantiques</h3>
-                    <p>Visualiser les forces invisibles qui régissent le monde subatomique.</p>
+                    <p>Une mise en perspective accessible des forces invisibles qui régissent la matière.</p>
                 </div>
             </div>
-            <div class="book-card">
-                <img class="book-cover-img" src="~/images/livres/economie.jpg" alt="Systèmes de Croissance" />
+
+            <div class="book-card reveal reveal-d3">
+                <div style="position:relative;">
+                    <img class="book-cover-img"
+                         src="~/images/livres/economie.jpg"
+                         alt="Systèmes de Croissance"
+                         width="320" height="200"
+                         loading="lazy"
+                         decoding="async"
+                         onload="this.classList.add('img-loaded')" />
+                    <div class="book-overlay"></div>
+                </div>
                 <div class="book-info">
-                    <span class="book-category">ÉCONOMIE</span>
+                    <span class="book-category">Économie</span>
                     <h3>Systèmes de Croissance</h3>
-                    <p>Un guide sur le développement organisationnel à l'ère du numérique.</p>
+                    <p>Un guide sur le développement organisationnel à l'ère des usages numériques.</p>
                 </div>
             </div>
+
         </div>
     </div>
 </section>
 
-<!-- FEATURES SECTION -->
+@* ════════════════════════════════════════
+     FONCTIONNALITÉS
+════════════════════════════════════════ *@
 <section class="features-section">
     <div class="section-container">
-        <h2 class="text-center">Un Accès Sans Faille</h2>
-        <p class="section-subtitle text-center">Votre espace de travail intellectuel, adapté à la vie moderne.</p>
+
+        <div class="reveal" style="text-align:center;">
+            <span class="section-kicker">Fonctionnalités</span>
+            <h2 class="text-center">Un parcours simple et fiable</h2>
+            <p class="section-subtitle text-center">
+                Chaque étape a été pensée pour être plus lisible et plus rassurante.
+            </p>
+        </div>
 
         <div class="features-grid">
-            <div class="feature-item">
+
+            <div class="feature-item reveal">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"
+                         viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z" />
                     </svg>
                 </div>
-                <h3>1. Adhésion Sécurisée</h3>
-                <p>Rejoignez notre communauté mondiale d'érudits avec un abonnement flexible.</p>
+                <h3>Adhésion sécurisée</h3>
+                <p>Inscription fluide, espace personnel clair et accès rapide à vos services de bibliothèque.</p>
             </div>
-            <div class="feature-item">
+
+            <div class="feature-item reveal reveal-d1">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"
+                         viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z" />
                     </svg>
                 </div>
-                <h3>2. Découvrir et Réserver</h3>
-                <p>Explorez notre vaste catalogue d'actifs physiques et numériques en un clic.</p>
+                <h3>Recherche et réservation</h3>
+                <p>Catalogue consultable rapidement avec des actions directes pour les membres actifs.</p>
             </div>
-            <div class="feature-item">
+
+            <div class="feature-item reveal reveal-d2">
                 <div class="feature-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.5">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
+                    <svg xmlns="http://www.w3.org/2000/svg" width="26" height="26" fill="none"
+                         viewBox="0 0 24 24" stroke="#2563eb" stroke-width="1.6">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                              d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0118 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25" />
                     </svg>
                 </div>
-                <h3>3. Lire et Retourner</h3>
-                <p>Gérez vos prêts sans effort via votre tableau de bord personnel.</p>
+                <h3>Suivi des emprunts</h3>
+                <p>Retours, notifications et alertes dans un tableau de bord net et professionnel.</p>
             </div>
+
         </div>
     </div>
 </section>
 
-<!-- CTA SECTION -->
+@* ════════════════════════════════════════
+     CTA
+════════════════════════════════════════ *@
 <section class="cta-section">
-    <div class="cta-container">
-        <h2>Débutez votre voyage intellectuel aujourd'hui</h2>
-        <p>Rejoignez des milliers de lecteurs qui ont transformé leur rapport à la littérature grâce à Lumina.</p>
-        <a asp-controller="Auth" asp-action="Inscription" class="btn-cta">Créer un compte gratuit</a>
+    <div class="cta-container reveal">
+        <span class="cta-eyebrow">Rejoignez Lumina</span>
+        <div class="cta-divider"></div>
+        <h2>Donnez une <em>meilleure impression</em><br>à vos lecteurs</h2>
+        <p>
+            Une interface sérieuse inspire davantage confiance et met mieux en valeur
+            le service proposé à chaque membre.
+        </p>
+        <a asp-controller="Auth" asp-action="Inscription" class="btn-cta">
+            Créer un compte gratuit
+            <svg class="btn-cta-arrow" xmlns="http://www.w3.org/2000/svg" width="16" height="16"
+                 fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13.5 4.5L21 12m0 0l-7.5 7.5M21 12H3" />
+            </svg>
+        </a>
     </div>
 </section>
+
+@section Scripts {
+<script>
+(function () {
+    // ── Scroll reveal ──────────────────────────────
+    var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (e) {
+            if (e.isIntersecting) {
+                e.target.classList.add('visible');
+                observer.unobserve(e.target);
+            }
+        });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) {
+        observer.observe(el);
+    });
+
+    // ── Navbar shadow au scroll ────────────────────
+    var nav = document.querySelector('.navbar');
+    if (nav) {
+        window.addEventListener('scroll', function () {
+            nav.classList.toggle('scrolled', window.scrollY > 20);
+        }, { passive: true });
+    }
+
+    // ── Fallback img déjà en cache ─────────────────
+    document.querySelectorAll('img[onload]').forEach(function (img) {
+        if (img.complete && img.naturalWidth > 0) {
+            img.classList.add('img-loaded');
+            var sk = document.getElementById('hero-skeleton');
+            if (sk) sk.style.display = 'none';
+        }
+    });
+})();
+</script>
+}

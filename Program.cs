@@ -32,8 +32,8 @@ using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
     var context = services.GetRequiredService<BibliothequeDbContext>();
-    await context.Database.MigrateAsync();
-    await DbInitializer.InitializeAsync(context);
+    //await context.Database.MigrateAsync();
+    //await DbInitializer.InitializeAsync(context);
 }
 
 // Configure the HTTP request pipeline.

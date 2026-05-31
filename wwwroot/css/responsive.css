@@ -1,0 +1,647 @@
+/* Final responsive layer. Loaded last to resolve cross-page layout conflicts. */
+
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+img,
+svg,
+video,
+canvas {
+    max-width: 100%;
+}
+
+main,
+.main-wrapper,
+.page-content,
+.admin-dashboard,
+.member-admin-page,
+.abo-admin-page,
+.message-page,
+.profile-page,
+.catalog-page,
+.auth-page {
+    min-width: 0;
+}
+
+.auth-page *,
+.page-content * {
+    min-width: 0;
+}
+
+.page-content {
+    overflow-x: clip;
+}
+
+:is(.dash-card,
+.dashboard-card,
+.kpi-card,
+.quick-card,
+.member-panel,
+.member-card,
+.member-profile-card,
+.member-stat,
+.abo-panel,
+.abo-stat,
+.abo-action-card,
+.message-card,
+.profile-card,
+.profile-summary-card,
+.catalog-shell,
+.catalog-filter-card,
+.book-card-modern,
+.reservation-card-modern) {
+    max-width: 100%;
+}
+
+.auth-card {
+    max-width: 680px;
+    width: min(680px, calc(100vw - 2rem));
+}
+
+:is(.admin-dashboard,
+.member-admin-page,
+.abo-admin-page,
+.message-page,
+.profile-page,
+.catalog-page,
+.member-dashboard,
+.member-dashboard-page,
+.member-portal,
+.catalog-section,
+.member-section-stack) {
+    width: 100%;
+}
+
+:is(.admin-table,
+.act-table,
+.member-table,
+.member-mini-table,
+.abo-table,
+.message-table,
+.table) {
+    width: 100%;
+}
+
+:is(.table-container,
+.table-responsive,
+.member-table-wrap,
+.abo-table-wrap,
+.message-table-wrap,
+.admin-table-wrap,
+.dashboard-table-wrap) {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.table-container > table,
+div[style*="overflow-x:auto"] > table {
+    min-width: 640px;
+}
+
+:is(.btn,
+.btn-sm,
+.btn-primary,
+.btn-secondary,
+.btn-submit,
+.home-btn,
+.admin-cta,
+.admin-cta-secondary,
+.member-btn,
+.member-btn-secondary,
+.member-btn-danger,
+.member-btn-ghost,
+.abo-btn,
+.abo-btn-secondary,
+.abo-btn-danger,
+.abo-tab,
+.message-btn,
+.message-link-btn,
+.profile-primary-btn,
+.profile-secondary-btn,
+.profile-secondary-link,
+.catalog-btn,
+.catalog-btn-soft,
+.book-btn,
+.book-btn-soft,
+.book-icon-btn) {
+    max-width: 100%;
+    white-space: normal;
+    text-align: center;
+    line-height: 1.2;
+}
+
+:is(input,
+select,
+textarea,
+button) {
+    max-width: 100%;
+    min-width: 0;
+}
+
+.search-submit {
+    border: 0;
+    border-radius: 12px;
+    flex: 0 0 auto;
+    padding: 0.72rem 1rem;
+    background: linear-gradient(135deg, #1f4f46, #2f7d68);
+    color: #fff;
+    font-weight: 800;
+    cursor: pointer;
+    white-space: nowrap;
+    box-shadow: 0 10px 24px rgba(31, 79, 70, 0.18);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.search-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(31, 79, 70, 0.24);
+}
+
+.search-submit:focus-visible {
+    outline: 3px solid rgba(47, 125, 104, 0.25);
+    outline-offset: 2px;
+}
+
+@media (max-width: 1200px) {
+    :is(.dashboard-grid,
+    .dashboard-grid-top,
+    .dashboard-grid-bottom,
+    .member-dashboard-grid,
+    .member-content-grid,
+    .member-hero-shell,
+    .profile-shell,
+    .detail-grid) {
+        grid-template-columns: 1fr;
+    }
+
+    :is(.kpi-grid,
+    .admin-stats-grid,
+    .member-stats,
+    .abo-stats,
+    .member-kpi-grid) {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 992px) {
+    .navbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+    }
+
+    .nav-container {
+        min-height: auto;
+        padding: 14px 18px;
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .nav-links {
+        order: 3;
+        width: 100%;
+        justify-content: flex-start;
+        overflow-x: auto;
+        padding-bottom: 2px;
+    }
+
+    .nav-actions {
+        margin-left: auto;
+        gap: 8px;
+    }
+
+    .hero-container,
+    .features-grid,
+    .stats-grid,
+    .footer-container {
+        grid-template-columns: 1fr;
+    }
+
+    .hero-container {
+        gap: 34px;
+    }
+}
+
+@media (max-width: 1100px) {
+    .main-wrapper {
+        margin-left: 0 !important;
+        width: 100%;
+    }
+
+    .page-content {
+        padding: 18px;
+    }
+
+    .topbar {
+        height: auto;
+        min-height: 72px;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 12px;
+        padding: 14px 16px;
+    }
+
+    .topbar-menu-btn {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        width: 42px;
+        height: 42px;
+        border: 1px solid rgba(148, 163, 184, 0.24);
+        background: #ffffff;
+        color: #0f172a;
+        border-radius: 12px;
+        cursor: pointer;
+    }
+
+    .topbar-search {
+        order: 3;
+        display: flex !important;
+        width: 100% !important;
+        max-width: none !important;
+        flex: 1 1 100% !important;
+    }
+
+    .topbar-search input {
+        min-width: 0;
+    }
+
+    .topbar-right {
+        width: auto;
+        margin-left: auto;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .topbar-user {
+        min-width: 0;
+    }
+
+    .sidebar {
+        width: min(88vw, 320px) !important;
+        transform: translateX(-100%);
+        transition: transform 0.25s ease;
+    }
+
+    .sidebar.open {
+        transform: translateX(0) !important;
+    }
+
+    .sidebar-overlay {
+        position: fixed;
+        inset: 0;
+        display: none;
+        background: rgba(15, 23, 42, 0.44);
+        backdrop-filter: blur(2px);
+        z-index: 90;
+    }
+
+    .sidebar-overlay.show {
+        display: block;
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .sidebar .sidebar-brand {
+        justify-content: flex-start;
+    }
+
+    .sidebar .brand-name,
+    .sidebar .brand-sub {
+        display: block !important;
+    }
+
+    .sidebar .nav-item {
+        justify-content: flex-start !important;
+        text-align: left;
+    }
+
+    .sidebar .nav-item > span:not(.nav-badge) {
+        display: inline-flex !important;
+    }
+
+    :is(.dashboard-hero,
+    .dash-hero,
+    .member-hero,
+    .member-hero-shell,
+    .abo-hero,
+    .message-hero,
+    .profile-hero-rich,
+    .catalog-hero,
+    .hero-container,
+    .section-heading,
+    .panel-header,
+    .member-panel-head,
+    .member-panel-header,
+    .member-card-header,
+    .abo-panel-header,
+    .abo-toolbar,
+    .message-card-head,
+    .profile-card-head,
+    .catalog-section-head,
+    .card-header) {
+        grid-template-columns: 1fr !important;
+        flex-direction: column;
+        align-items: flex-start !important;
+    }
+
+    :is(.hero-side,
+    .member-hero-side,
+    .abo-hero-side,
+    .message-toolbar,
+    .profile-actions,
+    .member-form-actions,
+    .abo-form-actions,
+    .admin-form-actions,
+    .catalog-actions,
+    .book-card-actions,
+    .book-card-inline-actions,
+    .reservation-actions-modern) {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    :is(.member-form-grid,
+    .abo-form-grid,
+    .profile-grid,
+    .profile-grid-security,
+    .admin-form-grid,
+    .form-row,
+    .filter-bar,
+    .catalog-filter-form,
+    .catalogue-filter-form) {
+        grid-template-columns: 1fr !important;
+    }
+
+    .filter-bar {
+        display: grid !important;
+        align-items: stretch !important;
+    }
+
+    :is(.member-field.full,
+    .profile-field-full,
+    .admin-form-full) {
+        grid-column: auto !important;
+    }
+}
+
+@media (max-width: 680px) {
+    .page-content {
+        padding: 14px;
+    }
+
+    :is(.dashboard-hero,
+    .dash-hero,
+    .member-hero,
+    .member-hero-shell,
+    .abo-hero,
+    .message-hero,
+    .profile-hero-rich,
+    .catalog-hero,
+    .dashboard-card,
+    .dash-card,
+    .kpi-card,
+    .quick-card,
+    .member-panel,
+    .member-card,
+    .member-kpi-card,
+    .member-profile-card,
+    .abo-panel,
+    .abo-stat,
+    .abo-action-card,
+    .message-card,
+    .profile-card,
+    .profile-summary-card,
+    .catalog-shell,
+    .catalog-filter-card) {
+        padding: 16px !important;
+    }
+
+    .auth-card {
+        width: min(680px, calc(100vw - 1.7rem));
+    }
+
+    :is(.kpi-grid,
+    .admin-stats-grid,
+    .member-stats,
+    .abo-stats,
+    .member-kpi-grid,
+    .member-hero-stats,
+    .profile-quick-grid,
+    .member-profile-grid,
+    .member-summary-grid,
+    .abo-actions-grid,
+    .quick-grid,
+    .features-grid,
+    .books-grid,
+    .category-stats,
+    .catalog-grid,
+    .stats-grid,
+    .book-card-actions,
+    .book-card-actions.compact,
+    .book-card-compact .book-card-actions) {
+        grid-template-columns: 1fr !important;
+    }
+
+    :is(.hero-copy h1,
+    .member-hero-copy h1,
+    .member-hero h1,
+    .abo-hero h1,
+    .message-hero h1,
+    .profile-hero h1,
+    .profile-hero-copy h1,
+    .catalog-hero h1,
+    .auth-header h1,
+    .dash-hero h1,
+    .section-heading h2) {
+        font-size: 1.65rem !important;
+        line-height: 1.15;
+    }
+
+    :is(.hero-copy p,
+    .member-hero p,
+    .abo-hero p,
+    .message-hero p,
+    .profile-hero p,
+    .catalog-hero p,
+    .auth-header p) {
+        font-size: 0.95rem !important;
+    }
+
+    :is(.admin-cta,
+    .admin-cta-secondary,
+    .member-btn,
+    .member-btn-secondary,
+    .member-btn-danger,
+    .member-btn-ghost,
+    .abo-btn,
+    .abo-btn-secondary,
+    .abo-btn-danger,
+    .message-btn,
+    .message-link-btn,
+    .profile-primary-btn,
+    .profile-secondary-btn,
+    .profile-secondary-link,
+    .catalog-btn,
+    .catalog-btn-soft,
+    .book-btn,
+    .book-btn-soft,
+    .book-icon-btn,
+    .home-btn,
+    .btn-sm,
+    .btn-primary,
+    .btn-secondary,
+    .btn-submit) {
+        width: 100%;
+        justify-content: center;
+        min-height: 44px;
+    }
+
+    .book-icon-btn {
+        width: 100%;
+    }
+
+    :is(.member-loan-item,
+    .member-reservation-item,
+    .reservation-card-modern,
+    .priority-item,
+    .radial-wrap) {
+        grid-template-columns: 1fr !important;
+    }
+
+    :is(.member-book-spine,
+    .priority-badge) {
+        width: 56px;
+        max-width: 56px;
+    }
+
+    :is(.metric-row,
+    .distribution-head,
+    .profile-actions,
+    .admin-form-actions,
+    .member-actions,
+    .abo-actions,
+    .message-actions) {
+        flex-direction: column;
+        align-items: stretch !important;
+    }
+
+    .topbar-right {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .topbar-user {
+        flex: 1 1 auto;
+        justify-content: flex-end;
+    }
+
+    .user-info {
+        display: none;
+    }
+
+    .search-submit {
+        padding-inline: 0.85rem;
+    }
+
+    .hero-actions,
+    .nav-actions,
+    .footer-bottom {
+        width: 100%;
+    }
+
+    .hero-actions,
+    .nav-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    .page-content {
+        padding: 10px;
+    }
+
+    .topbar {
+        padding: 10px;
+    }
+
+    .topbar-search {
+        padding: 8px 10px !important;
+        gap: 8px;
+    }
+
+    .topbar-search input {
+        font-size: 0.9rem;
+    }
+
+    .search-submit {
+        min-height: 38px;
+        padding-inline: 0.7rem;
+        font-size: 0.78rem;
+    }
+
+    :is(.message-table,
+    .member-table,
+    .member-mini-table,
+    .abo-table,
+    .admin-table,
+    .act-table,
+    .table,
+    div[style*="overflow-x:auto"] > table) {
+        min-width: 620px;
+    }
+
+    #toast {
+        left: 0.75rem !important;
+        right: 0.75rem !important;
+        bottom: 0.75rem !important;
+        width: auto !important;
+        max-width: none !important;
+    }
+
+    #actionModal {
+        padding: 0.75rem;
+    }
+
+    #actionModal > div {
+        width: 100% !important;
+        max-width: 420px !important;
+        padding: 1.25rem !important;
+    }
+
+    #actionModal > div > div:last-child {
+        display: grid !important;
+        grid-template-columns: 1fr;
+        justify-content: stretch !important;
+    }
+
+    .navbar-brand {
+        max-width: 100%;
+    }
+
+    .nav-container,
+    .footer-container,
+    .footer-bottom,
+    .auth-page-footer {
+        text-align: center;
+        justify-content: center;
+    }
+
+    .auth-page {
+        padding-inline: 10px;
+    }
+
+    .auth-card {
+        padding-inline: 14px !important;
+    }
+}

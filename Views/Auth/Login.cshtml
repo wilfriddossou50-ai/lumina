@@ -4,25 +4,29 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+}
+
 <div class="auth-page">
     <div class="auth-back">
         <a asp-controller="Home" asp-action="Index">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
             </svg>
-            Retour à l'accueil
+            Retour a l'accueil
         </a>
     </div>
 
-    <div class="auth-card">
+    <div class="auth-card auth-card--compact">
         <div class="auth-header">
             <div class="auth-logo">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="white" viewBox="0 0 24 24">
                     <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z"/>
                 </svg>
             </div>
-            <h1>Connexion à Lumina</h1>
-            <p>Accédez à votre espace membre</p>
+            <h1>Connexion a Lumina</h1>
+            <p>Accedez a votre espace membre</p>
         </div>
         <hr class="auth-divider" />
         <form asp-action="Login" asp-controller="Auth" method="post" id="loginForm">
@@ -34,7 +38,18 @@
             </div>
             <div class="form-group">
                 <label asp-for="Password">MOT DE PASSE</label>
-                <input asp-for="Password" type="password" class="form-control" placeholder="••••••••" autocomplete="current-password" />
+                <div class="input-icon-wrap">
+                    <svg class="input-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 10-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 002.25-2.25v-6.75a2.25 2.25 0 00-2.25-2.25H6.75a2.25 2.25 0 00-2.25 2.25v6.75a2.25 2.25 0 002.25 2.25z" />
+                    </svg>
+                    <input asp-for="Password" type="password" class="form-control has-icon has-icon-right" id="loginPasswordInput" placeholder="********" autocomplete="current-password" />
+                    <button type="button" class="toggle-password" id="loginPasswordToggle" aria-label="Afficher le mot de passe" aria-pressed="false">
+                        <svg id="loginEyeIcon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        </svg>
+                    </button>
+                </div>
                 <span asp-validation-for="Password" class="field-error"></span>
             </div>
             <div class="form-group checkbox-group">
@@ -46,15 +61,46 @@
             <button type="submit" class="btn-submit">Se connecter</button>
         </form>
         <div class="auth-footer">
-            Pas encore de compte ? <a asp-controller="Auth" asp-action="Inscription" class="link-blue">Créer un compte</a>
+            Pas encore de compte ? <a asp-controller="Auth" asp-action="Inscription" class="link-blue">Creer un compte</a>
         </div>
     </div>
     <div class="auth-page-footer">
-        <span>© 2024 Lumina Bibliotheque. All rights reserved.</span>
+        <span>2024 Lumina Bibliotheque. All rights reserved.</span>
         <div class="auth-page-footer-links">
             <a href="#">Aide</a>
             <a href="#">Contact</a>
-            <a href="#">Français (FR)</a>
+            <a href="#">Francais (FR)</a>
         </div>
     </div>
 </div>
+
+@section Scripts {
+<script>
+    (function () {
+        const input = document.getElementById('loginPasswordInput');
+        const button = document.getElementById('loginPasswordToggle');
+        const icon = document.getElementById('loginEyeIcon');
+
+        if (!input || !button || !icon) {
+            return;
+        }
+
+        const eyeOpen = '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />';
+        const eyeClosed = '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223a9.005 9.005 0 0116.04 0M2.248 12a10.97 10.97 0 001.43 3.45m3.61 3.4A9.958 9.958 0 0012 19.5a9.96 9.96 0 005.829-1.628m3.497-3.22a10.967 10.967 0 00.428-1.302" />';
+
+        const syncState = () => {
+            const hidden = input.type === 'password';
+            icon.innerHTML = hidden ? eyeOpen : eyeClosed;
+            button.setAttribute('aria-label', hidden ? 'Afficher le mot de passe' : 'Masquer le mot de passe');
+            button.setAttribute('aria-pressed', String(!hidden));
+        };
+
+        button.addEventListener('click', () => {
+            input.type = input.type === 'password' ? 'text' : 'password';
+            syncState();
+        });
+
+        syncState();
+    })();
+</script>
+}

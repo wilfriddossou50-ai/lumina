@@ -4,6 +4,10 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
+@section Styles {
+    <link rel="stylesheet" href="~/css/auth.css" asp-append-version="true" />
+}
+
 <div class="auth-page">
     <div class="auth-back">
         <a asp-controller="Home" asp-action="Index">
@@ -14,7 +18,7 @@
         </a>
     </div>
 
-    <div class="auth-card">
+    <div class="auth-card auth-card--wide">
 
         <!-- En-tête -->
         <div class="auth-header">
@@ -136,7 +140,7 @@
             <!-- CGU -->
             <div class="form-group checkbox-group">
                 <label class="checkbox-label">
-                    <input asp-for="AccepterConditions" type="checkbox" />
+                    <input asp-for="AccepterConditions" id="acceptTerms" type="checkbox" />
                     <span>
                         J'accepte les <a href="#" class="link-blue">conditions générales d'utilisation</a>
                         et la politique de confidentialité de Lumina Bibliotheque.
@@ -146,7 +150,7 @@
             </div>
 
             <!-- Bouton -->
-            <button type="submit" class="btn-submit">Créer mon compte</button>
+            <button id="submitButton" type="submit" class="btn-submit" disabled>Créer mon compte</button>
         </form>
 
         <!-- Lien connexion -->
@@ -171,38 +175,56 @@
     // Toggle mot de passe
     function togglePassword() {
         const input = document.getElementById('passwordInput');
+        const eyeIcon = document.getElementById('eyeIcon');
         input.type = input.type === 'password' ? 'text' : 'password';
+        eyeIcon.innerHTML = input.type === 'password'
+            ? '<path stroke-linecap="round" stroke-linejoin="round" d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.964-7.178z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />'
+            : '<path stroke-linecap="round" stroke-linejoin="round" d="M3.98 8.223a9.005 9.005 0 0116.04 0M2.248 12a10.97 10.97 0 001.43 3.45m3.61 3.4A9.958 9.958 0 0012 19.5a9.96 9.96 0 005.829-1.628m3.497-3.22a10.967 10.967 0 00.428-1.302" />';
     }
 
-    // Force du mot de passe
-    document.getElementById('passwordInput').addEventListener('input', function () {
-        const val = this.value;
-        const fill = document.getElementById('strengthFill');
-        const label = document.getElementById('strengthLabel');
-        let score = 0;
-        if (val.length >= 6) score++;
-        if (val.length >= 10) score++;
-        if (/[A-Z]/.test(val)) score++;
-        if (/[0-9]/.test(val)) score++;
-        if (/[^A-Za-z0-9]/.test(val)) score++;
+    // Activer le bouton après validation des conditions
+    function updateSubmitState() {
+        const checkbox = document.getElementById('acceptTerms');
+        const submitBtn = document.getElementById('submitButton');
+        if (!submitBtn) return;
+        submitBtn.disabled = !checkbox.checked;
+    }
 
-        const levels = [
-            { pct: '20%', color: '#ef4444', text: 'Très faible' },
-            { pct: '40%', color: '#f97316', text: 'Faible' },
-            { pct: '60%', color: '#eab308', text: 'Moyen' },
-            { pct: '80%', color: '#3b82f6', text: 'Robuste' },
-            { pct: '100%', color: '#22c55e', text: 'Excellent' },
-        ];
-        if (val.length === 0) {
-            fill.style.width = '0';
-            label.textContent = '';
-            return;
-        }
-        const lvl = levels[Math.min(score, 4)];
-        fill.style.width = lvl.pct;
-        fill.style.background = lvl.color;
-        label.textContent = 'Force du mot de passe : ' + lvl.text;
-        label.style.color = lvl.color;
+    document.addEventListener('DOMContentLoaded', function () {
+        const checkbox = document.getElementById('acceptTerms');
+        if (!checkbox) return;
+        checkbox.addEventListener('change', updateSubmitState);
+        updateSubmitState();
+
+        document.getElementById('passwordInput')?.addEventListener('input', function () {
+            const val = this.value;
+            const fill = document.getElementById('strengthFill');
+            const label = document.getElementById('strengthLabel');
+            let score = 0;
+            if (val.length >= 6) score++;
+            if (val.length >= 10) score++;
+            if (/[A-Z]/.test(val)) score++;
+            if (/[0-9]/.test(val)) score++;
+            if (/[^A-Za-z0-9]/.test(val)) score++;
+
+            const levels = [
+                { pct: '20%', color: '#ef4444', text: 'Très faible' },
+                { pct: '40%', color: '#f97316', text: 'Faible' },
+                { pct: '60%', color: '#eab308', text: 'Moyen' },
+                { pct: '80%', color: '#3b82f6', text: 'Robuste' },
+                { pct: '100%', color: '#22c55e', text: 'Excellent' },
+            ];
+            if (val.length === 0) {
+                fill.style.width = '0';
+                label.textContent = '';
+                return;
+            }
+            const lvl = levels[Math.min(score, 4)];
+            fill.style.width = lvl.pct;
+            fill.style.background = lvl.color;
+            label.textContent = 'Force du mot de passe : ' + lvl.text;
+            label.style.color = lvl.color;
+        });
     });
 </script>
 }

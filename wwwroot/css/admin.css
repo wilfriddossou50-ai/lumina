@@ -336,10 +336,9 @@
     .catalogue-filter-form .btn { width: 100%; }
 }
 
-@media (max-width: 640px) {
-    /* Le comportement "drawer" est géré dans admin-layout.css */
-    .topbar-search { width: 160px; }
-}
+/* Legacy block kept inactive to prevent generic selector conflicts. */
+@media not all {
+
 /* =========================================================
    MEMBER FORM MODERN UI
 ========================================================= */
@@ -745,6 +744,8 @@
     }
 }
 
+}
+
 .dash-hero {
     display: flex;
     justify-content: space-between;
@@ -921,4 +922,98 @@
 .admin-form-actions .admin-cta,
 .admin-form-actions .admin-cta-secondary {
     min-width: 160px;
+}
+
+/* Conflict guards: keep layout and admin content styles from overriding each other. */
+.topbar .topbar-search {
+    width: min(520px, 100%);
+    flex: 1 1 480px;
+    padding: 8px 10px 8px 14px;
+}
+
+.topbar .topbar-search input {
+    min-width: 0;
+}
+
+.dash-card.form-card .form-group {
+    margin-bottom: 16px;
+}
+
+.dash-card.form-card .form-group label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0;
+    color: var(--text-main);
+}
+
+.dash-card.form-card .form-control {
+    width: 100%;
+    min-height: 48px;
+    height: auto;
+    padding: 0.85rem 1rem;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #ffffff;
+    color: var(--text-dark);
+    font-family: var(--font);
+    font-size: 0.91rem;
+    box-shadow: none;
+}
+
+.dash-card.form-card select.form-control {
+    height: 48px;
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+.dash-card.form-card textarea.form-control {
+    min-height: 120px;
+    padding-top: 0.9rem;
+    resize: vertical;
+}
+
+.dash-card.form-card .form-control:focus {
+    outline: none;
+    border-color: rgba(15, 118, 110, 0.45);
+    box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.1);
+}
+
+@media (max-width: 1100px) {
+    .topbar .topbar-search {
+        width: min(420px, 100%);
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar .sidebar-brand {
+        justify-content: flex-start;
+    }
+
+    .sidebar .brand-name,
+    .sidebar .brand-sub,
+    .sidebar .nav-item span:not(.nav-badge) {
+        display: inline-flex;
+    }
+
+    .sidebar .brand-name,
+    .sidebar .brand-sub {
+        display: block;
+    }
+
+    .sidebar .nav-item {
+        justify-content: flex-start;
+    }
+
+    .topbar .topbar-search {
+        width: 100%;
+        flex: 1 1 100%;
+    }
+}
+
+@media (max-width: 560px) {
+    .topbar .topbar-search {
+        padding: 10px 12px;
+    }
 }

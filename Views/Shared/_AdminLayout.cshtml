@@ -4,6 +4,7 @@
 @{
     var title = ViewData["Title"] ?? "Admin";
     var activePage = ViewData["ActivePage"]?.ToString() ?? "";
+    var searchTerm = ViewData["SearchTerm"]?.ToString() ?? Context.Request.Query["searchTerm"].ToString();
     int nbNotifs = ViewBag.NotificationCount as int? ?? ViewBag.NbNotifsAdmin as int? ?? 0;
     string adminNom = ViewBag.MembreNom as string ?? CurrentUser.DisplayName;
     string initiales = adminNom.Split(' ') is var p && p.Length >= 2
@@ -20,6 +21,7 @@
     <link rel="stylesheet" href="~/css/admin-layout.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/css/admin.css" asp-append-version="true" />
     @RenderSection("Styles", required: false)
+    <link rel="stylesheet" href="~/css/responsive.css" asp-append-version="true" />
 </head>
 <body>
 
@@ -111,11 +113,12 @@
         <button type="button" class="topbar-menu-btn" id="sidebarToggle" aria-label="Ouvrir le menu">
             <span data-lucide="menu"></span>
         </button>
-        <div class="topbar-search">
+
+        <form class="topbar-search" asp-controller="Catalogue" asp-action="Index" method="get" role="search">
             <span data-lucide="search"></span>
-            <input type="text" placeholder="Rechercher un livre, membre, emprunt..." id="searchInput" />
-            <span class="search-kbd">Entrer</span>
-        </div>
+            <input type="search" name="searchTerm" value="@searchTerm" placeholder="Rechercher un livre ou un auteur..." id="searchInput" autocomplete="off" />
+            <button type="submit" class="search-submit" aria-label="Lancer la recherche">Rechercher</button>
+        </form>
 
         <div class="topbar-right">
             <a asp-controller="Notification" asp-action="Index" class="topbar-icon-btn" title="Notifications">
@@ -173,12 +176,6 @@
     overlay?.addEventListener('click', closeSidebar);
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') closeSidebar();
-    });
-
-    document.getElementById('searchInput')?.addEventListener('keydown', function (e) {
-        if (e.key === 'Enter' && this.value.trim()) {
-            window.location.href = '/Catalogue?searchTerm=' + encodeURIComponent(this.value.trim());
-        }
     });
 </script>
 @RenderSection("Scripts", required: false)

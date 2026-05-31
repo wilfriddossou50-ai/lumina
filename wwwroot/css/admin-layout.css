@@ -189,14 +189,15 @@ img {
 }
 
 .topbar-search {
-    width: 420px;
+    width: min(520px, 100%);
+    flex: 1 1 480px;
     display: flex;
     align-items: center;
     gap: 10px;
     background: #f8fafc;
     border: 1px solid #e2e8f0;
     border-radius: 12px;
-    padding: 10px 14px;
+    padding: 8px 10px 8px 14px;
     transition: 0.2s ease;
     min-width: 0;
     max-width: 100%;
@@ -216,19 +217,41 @@ img {
     color: var(--text);
     font-size: 14px;
     font-family: inherit;
+    min-width: 0;
 }
 
 .topbar-search input::placeholder {
     color: #94a3b8;
 }
 
-.search-kbd {
-    padding: 2px 7px;
-    border-radius: 6px;
-    background: white;
-    border: 1px solid #e2e8f0;
-    color: #94a3b8;
-    font-size: 11px;
+.search-submit {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    padding: 0.6rem 0.9rem;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, var(--primary), var(--accent));
+    color: white;
+    font-size: 0.8rem;
+    font-weight: 700;
+    font-family: var(--font-sans);
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    box-shadow: 0 10px 20px rgba(15, 118, 110, 0.12);
+}
+
+.search-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 12px 24px rgba(15, 118, 110, 0.18);
+}
+
+.search-submit:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(20, 184, 166, 0.18), 0 10px 20px rgba(15, 118, 110, 0.12);
 }
 
 .topbar-right {
@@ -383,7 +406,7 @@ img {
     }
 
     .topbar-search {
-        width: min(360px, 100%);
+        width: min(420px, 100%);
     }
 }
 
@@ -408,6 +431,25 @@ img {
 
     .sidebar.open {
         transform: translateX(0);
+    }
+
+    .sidebar-brand {
+        justify-content: flex-start;
+    }
+
+    .brand-name,
+    .brand-sub,
+    .nav-item span:not(.nav-badge),
+    .user-info {
+        display: block;
+    }
+
+    .nav-item {
+        justify-content: flex-start;
+    }
+
+    .nav-item span:not(.nav-badge) {
+        display: inline-flex;
     }
 
     .sidebar-overlay {
@@ -438,6 +480,7 @@ img {
         order: 3;
         width: 100%;
         max-width: none;
+        flex: 1 1 100%;
     }
 
     .topbar-right {
@@ -476,8 +519,9 @@ img {
         padding: 10px 12px;
     }
 
-    .search-kbd {
-        display: none;
+    .search-submit {
+        padding: 0.55rem 0.8rem;
+        font-size: 0.78rem;
     }
 
     .page-content {
